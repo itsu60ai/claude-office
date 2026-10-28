@@ -35,7 +35,7 @@ Who's working, who got stuck, and what's waiting on you.
 <td width="50%" valign="top">
 
 ### 🪑 A desk for every chat
-<img src="assets/desks-en.png" alt="Desks">
+<img src="assets/desks-en.png" width="100%" alt="Desks">
 
 See at a glance what each chat is doing: 🟢 working, 🟠 stopped, 🔵 done and waiting for you.
 
@@ -43,25 +43,27 @@ See at a glance what each chat is doing: 🟢 working, 🟠 stopped, 🔵 done a
 <td width="50%" valign="top">
 
 ### ✅ One-tap questions
-<img src="assets/question-en.png" alt="Question card">
+<img src="assets/question-en.png" width="100%" alt="Question card">
 
 Claude needs a decision? It arrives as a card with Claude's pick. Yes, No, or Later.
 
 </td>
 </tr>
 <tr>
-<td width="50%" valign="top">
+<td colspan="2" valign="top">
 
 ### ✍️ Ask Claude
-<img src="assets/ask-en.png" alt="Request box">
+<img src="assets/ask-en.png" width="100%" alt="Request box">
 
 Write it in plain words. The page guesses the project and opens a chat with your text ready.
 
 </td>
-<td width="50%" valign="top">
+</tr>
+<tr>
+<td colspan="2" valign="top">
 
 ### 💡 Ideas for the next version
-<img src="assets/next-en.png" alt="Ideas for the next version">
+<p align="center"><img src="assets/next-en.png" width="55%" alt="Ideas for the next version"></p>
 
 Missing something? Write it down. Press Build, and Claude builds a new version on a separate copy.
 
@@ -71,7 +73,7 @@ Missing something? Write it down. Press Build, and Claude builds a new version o
 
 <div align="center">
 
-📷 Up to 4 pictures per request &nbsp;·&nbsp; 📱 Works on your phone &nbsp;·&nbsp; 🌐 Hebrew and English &nbsp;·&nbsp; 🔄 Refreshes itself every 10 seconds
+📷 Up to 4 pictures per request &nbsp;·&nbsp; 🌐 Hebrew and English &nbsp;·&nbsp; 🔄 Refreshes itself every 10 seconds
 
 </div>
 

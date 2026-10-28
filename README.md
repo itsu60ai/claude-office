@@ -37,7 +37,7 @@
 <td width="50%" valign="top">
 
 ### 🪑 שולחן לכל שיחה
-<img src="assets/desks-he.png" alt="שולחנות">
+<img src="assets/desks-he.png" width="100%" alt="שולחנות">
 
 רואים במבט מה כל שיחה עושה עכשיו: 🟢 עובדת, 🟠 נעצרה, 🔵 סיימה ומחכה לך.
 
@@ -45,25 +45,27 @@
 <td width="50%" valign="top">
 
 ### ✅ שאלות בלחיצה אחת
-<img src="assets/question-he.png" alt="כרטיס שאלה">
+<img src="assets/question-he.png" width="100%" alt="כרטיס שאלה">
 
 קלוד צריך ממך החלטה? היא מגיעה ככרטיס עם ההמלצה שלו. כן, לא, או אחר כך.
 
 </td>
 </tr>
 <tr>
-<td width="50%" valign="top">
+<td colspan="2" valign="top">
 
 ### ✍️ לבקש מקלוד
-<img src="assets/ask-he.png" alt="תיבת בקשה">
+<img src="assets/ask-he.png" width="100%" alt="תיבת בקשה">
 
 כותבים בעברית רגילה. הדף מנחש לאיזה פרויקט זה שייך ופותח שיחה עם הטקסט מוכן.
 
 </td>
-<td width="50%" valign="top">
+</tr>
+<tr>
+<td colspan="2" valign="top">
 
 ### 💡 רעיונות לגרסה הבאה
-<img src="assets/next-he.png" alt="רעיונות לגרסה הבאה">
+<p align="center"><img src="assets/next-he.png" width="55%" alt="רעיונות לגרסה הבאה"></p>
 
 חסר לך משהו בדף? רושמים. לוחצים "לבנות", וקלוד בונה גרסה חדשה על עותק נפרד.
 
@@ -73,7 +75,7 @@
 
 <div align="center">
 
-📷 עד 4 תמונות לבקשה &nbsp;·&nbsp; 📱 עובד בטלפון &nbsp;·&nbsp; 🌐 עברית ואנגלית &nbsp;·&nbsp; 🔄 מתעדכן לבד כל 10 שניות
+📷 עד 4 תמונות לבקשה &nbsp;·&nbsp; 🌐 עברית ואנגלית &nbsp;·&nbsp; 🔄 מתעדכן לבד כל 10 שניות
 
 </div>
 
