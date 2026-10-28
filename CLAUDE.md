@@ -3,7 +3,7 @@
 This folder is a local page (`server.py` + `index.html`) that shows the user's Claude Code chats as desks and carries their requests to the right chat. It runs on 127.0.0.1 only.
 
 ## Setting it up for the user
-When asked to set up the office: read `office.example.json`, ask the user for their projects and the folder each lives in, and write `office.json` in this folder. Ids are lowercase English (`[a-z0-9-]`). Suggest `keywords` in Hebrew and English (a regex, words joined by `|`). Put names that must not appear on the page in `privateNames` as `{"name": "alias"}`. The page reloads `office.json` by itself. When setup is done, tell the user one line: after a few days of use, open a chat in this folder and write "פידבק" (or "feedback").
+When asked to set up the office: read `office.example.json`, ask the user for their projects and the folder each lives in, and write `office.json` in this folder. Ids are lowercase English (`[a-z0-9-]`). Suggest `keywords` in Hebrew and English (a regex, words joined by `|`). Put names that must not appear on the page in `privateNames` as `{"name": "alias"}`. The page reloads `office.json` by itself. When setup is done, tell the user one line: after a few days of use, press "💬 פידבק" ("Feedback") at the top of the office, answer three questions, and send the ready WhatsApp message.
 
 ## Leaving the user a question
 When you need a decision from the user, add it to `tasks.json` in this folder (create it as `{"items": []}` if missing; see `tasks.example.json`):

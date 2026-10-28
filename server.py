@@ -905,6 +905,14 @@ def office_view(clean):
     return rows, il, cur, picks
 
 
+def version():
+    try:
+        with open(os.path.join(HERE, "VERSION"), encoding="utf-8") as f:
+            return f.read().strip()[:20]
+    except OSError:
+        return ""
+
+
 def live():
     clean = Clean()
     d, feed = desks(clean)
@@ -919,8 +927,7 @@ def live():
                 "requests": [], "ideas": [], "build": None, "projects": []}
     c = config()
     data.update(officeName=c["officeName"], defaultLang=c["defaultLang"], defaultProject=c["defaultProject"],
-                hints=hints(),
-                feedback={k: NEW_CHAT % (quote(w, safe=""), quote(HERE, safe="")) for k, w in (("he", "פידבק"), ("en", "feedback"))})
+                hints=hints(), version=version())
     return data
 
 

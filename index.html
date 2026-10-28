@@ -17,17 +17,23 @@
   --font:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
 }
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.45}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:1rem;line-height:1.45}
 button,a{font:inherit}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 
 /* top bar */
+html{font-size:100%}
+.sizeCtl{display:flex;gap:4px;flex:none}
+.sizeCtl button{width:44px;height:44px;padding:0;font-weight:700;cursor:pointer;line-height:1}
+.sizeCtl .sm{font-size:15px}
+.sizeCtl .lg{font-size:22px}
+.sizeCtl button:disabled{opacity:.4;cursor:default}
 .bar{background:var(--bar-bg);color:var(--bar-ink)}
 .bar-in{max-width:1100px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:10px 22px;flex-wrap:wrap}
-.brand{font-weight:700;font-size:18px;margin-inline-end:6px}
+.brand{font-weight:700;font-size:1.125rem;margin-inline-end:6px}
 .stats{display:flex;gap:18px;flex-wrap:wrap}
-.stat small{display:block;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--bar-muted)}
-.stat b{font-size:18px}
+.stat small{display:block;font-size:0.6875rem;letter-spacing:.05em;text-transform:uppercase;color:var(--bar-muted)}
+.stat b{font-size:1.125rem}
 .barEnd{margin-inline-start:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .langBtn{background:var(--bar-btn);color:var(--bar-ink);border:2px solid var(--bar-btn-line);border-radius:8px;padding:8px 14px;
   font-weight:600;cursor:pointer;min-height:44px}
@@ -37,7 +43,7 @@ button,a{font:inherit}
 .tourBtn:hover{filter:brightness(1.05)} .tourBtn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--tour-edge)}
 .tourBtn.fresh{animation:nudge 2.4s ease-in-out 3}
 @keyframes nudge{0%,100%{transform:none}50%{transform:translateY(-3px)}}
-.strip{background:var(--soft);border-bottom:1px solid var(--line);font-size:14px;color:var(--ink-soft)}
+.strip{background:var(--soft);border-bottom:1px solid var(--line);font-size:0.875rem;color:var(--ink-soft)}
 .strip div{max-width:1100px;margin:0 auto;padding:6px 16px}
 .strip .err{color:#b3342d;font-weight:600}
 
@@ -47,8 +53,8 @@ main{max-width:1100px;margin:0 auto;padding:14px 16px;display:grid;gap:14px;
 #askPanel{grid-area:ask} #officePanel{grid-area:office} #nowCard{grid-area:needs} #feedPanel{grid-area:feed} #nextPanel{grid-area:next}
 @media (max-width:759px){ main{grid-template-columns:minmax(0,1fr);grid-template-areas:"ask" "needs" "office" "feed" "next"} }
 .panel{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:14px 16px;box-shadow:var(--shadow-card)}
-.panel h2{font-size:18px;margin:0 0 4px}
-.hint{font-size:14px;color:var(--muted);margin:0 0 10px}
+.panel h2{font-size:1.125rem;margin:0 0 4px}
+.hint{font-size:0.875rem;color:var(--muted);margin:0 0 10px}
 
 /* the office scene and the speech bubble over a desk; the drawing itself stays left-to-right in both languages */
 .sceneBox{position:relative}
@@ -65,11 +71,11 @@ main{max-width:1100px;margin:0 auto;padding:14px 16px;display:grid;gap:14px;
 @keyframes zz{0%{opacity:.2}50%{opacity:1}100%{opacity:.2}}
 .bubble{position:absolute;z-index:5;width:min(280px,calc(100% - 12px));background:#fff;border:2px solid var(--ink);border-radius:8px;
   padding:10px 12px;box-shadow:4px 4px 0 rgba(43,42,38,.85)}
-.bubble b{display:block;font-size:15px}
-.bubble .meta{font-size:13px;color:var(--muted);margin:2px 0 4px}
-.bubble .what{font-size:14px;margin:0 0 10px}
+.bubble b{display:block;font-size:0.9375rem}
+.bubble .meta{font-size:0.8125rem;color:var(--muted);margin:2px 0 4px}
+.bubble .what{font-size:0.875rem;margin:0 0 10px}
 .bubble .row{gap:8px}
-.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--ink-soft);margin-top:10px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:0.8125rem;color:var(--ink-soft);margin-top:10px}
 .legend>span{display:inline-flex;align-items:center;gap:6px}
 .legend i{width:10px;height:10px;border-radius:50%;display:inline-block}
 
@@ -81,24 +87,24 @@ main{max-width:1100px;margin:0 auto;padding:14px 16px;display:grid;gap:14px;
 .btn2{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:9px 14px;border-radius:8px;cursor:pointer;
   text-decoration:none;font-weight:600;border:2px solid var(--line-strong);background:var(--panel);color:var(--ink);box-shadow:0 3px 0 var(--line-strong)}
 .btn2:hover{background:#fff} .btn2:active{transform:translateY(2px);box-shadow:0 1px 0 var(--line-strong)}
-.btn.sm,.btn2.sm{min-height:38px;padding:6px 12px;font-size:14px}
-.textBtn{background:none;border:0;color:var(--accent);cursor:pointer;padding:8px 0;min-height:40px;text-decoration:underline;font-size:14px}
+.btn.sm,.btn2.sm{min-height:38px;padding:6px 12px;font-size:0.875rem}
+.textBtn{background:none;border:0;color:var(--accent);cursor:pointer;padding:8px 0;min-height:40px;text-decoration:underline;font-size:0.875rem}
 :focus-visible{outline:3px solid var(--tour);outline-offset:2px}
 
 /* waiting on you */
 .needs{border-color:var(--warn-line);background:var(--amber-bg)}
-.needs .kicker{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--warn);margin:0 0 4px}
-.big{font-size:19px;font-weight:700;margin:0 0 4px}
-.sub{color:var(--ink-soft);font-size:15px;margin:0 0 12px}
-.lab{font-size:13px;font-weight:700;color:var(--ink-soft);margin:6px 0 0}
+.needs .kicker{font-size:0.75rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--warn);margin:0 0 4px}
+.big{font-size:1.1875rem;font-weight:700;margin:0 0 4px}
+.sub{color:var(--ink-soft);font-size:0.9375rem;margin:0 0 12px}
+.lab{font-size:0.8125rem;font-weight:700;color:var(--ink-soft);margin:6px 0 0}
 .needs .topic{margin:0 0 2px}
-.note{font-size:13px;color:var(--muted);margin:10px 0 0}
-ol.queue{margin:4px 0 0;padding:0;padding-inline-start:20px;font-size:15px}
+.note{font-size:0.8125rem;color:var(--muted);margin:10px 0 0}
+ol.queue{margin:4px 0 0;padding:0;padding-inline-start:20px;font-size:0.9375rem}
 ol.queue li{margin:4px 0}
 [hidden]{display:none!important}
 .whyBox{background:#fffaf0;border:1px solid var(--warn-line);border-radius:8px;padding:8px 12px;margin:8px 0 10px}
-.whyBox .lab{margin:0 0 2px} .whyBox .sub{margin:0;font-size:15px}
-.pick{font-size:15px;margin:0 0 12px;padding:8px 12px;border-radius:8px;background:#e4efd6;border:1px solid #a9c98f}
+.whyBox .lab{margin:0 0 2px} .whyBox .sub{margin:0;font-size:0.9375rem}
+.pick{font-size:0.9375rem;margin:0 0 12px;padding:8px 12px;border-radius:8px;background:#e4efd6;border:1px solid #a9c98f}
 .pick b{color:var(--accent-edge)}
 .btn.no{background:#fff;color:var(--ink);border-color:var(--line-strong);box-shadow:0 3px 0 var(--line-strong)}
 .btn.no:hover{background:#fff8ec}
@@ -107,9 +113,9 @@ ol.queue li{margin:4px 0}
 .btn[disabled],.btn2[disabled]{opacity:.55;cursor:wait}
 .later{margin-top:10px;background:#fffaf0;border:1px dashed var(--line-strong);border-radius:8px;padding:8px 10px}
 .later .lab{margin:0}
-.saved{margin:10px 0 0;font-size:15px;font-weight:600;color:var(--accent-edge)}
+.saved{margin:10px 0 0;font-size:0.9375rem;font-weight:600;color:var(--accent-edge)}
 .saved.err{color:#b3342d}
-.tag{display:inline-block;font-size:12px;color:var(--warn);border:1px solid var(--warn-line);background:#fff;border-radius:99px;padding:0 8px;margin-inline-start:6px}
+.tag{display:inline-block;font-size:0.75rem;color:var(--warn);border:1px solid var(--warn-line);background:#fff;border-radius:99px;padding:0 8px;margin-inline-start:6px}
 
 /* ask: one box in, a visible route, then the request's real state */
 .ask textarea{width:100%;min-height:84px;resize:vertical;border:2px solid var(--line-strong);border-radius:8px;padding:10px 12px;
@@ -119,29 +125,29 @@ ol.queue li{margin:4px 0}
 .pic{position:relative;width:64px;height:64px;border:2px solid var(--line-strong);border-radius:8px;overflow:hidden;background:#fff}
 .pic img{width:100%;height:100%;object-fit:cover;display:block}
 .pic button{position:absolute;top:2px;inset-inline-end:2px;width:24px;height:24px;border-radius:50%;border:1px solid var(--line-strong);
-  background:#fff;color:var(--ink);font-size:14px;line-height:1;cursor:pointer;padding:0}
+  background:#fff;color:var(--ink);font-size:0.875rem;line-height:1;cursor:pointer;padding:0}
 .ask textarea.drop{border-color:var(--accent-edge);background:var(--soft)}
-.route{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;font-size:14px;margin:8px 0 10px}
+.route{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;font-size:0.875rem;margin:8px 0 10px}
 .route .lab{margin:0}
-.route select{font:inherit;font-size:14px;min-height:40px;max-width:100%;border:2px solid var(--line-strong);border-radius:8px;background:#fff;color:var(--ink);padding:4px 8px}
+.route select{font:inherit;font-size:0.875rem;min-height:40px;max-width:100%;border:2px solid var(--line-strong);border-radius:8px;background:#fff;color:var(--ink);padding:4px 8px}
 .route select:disabled{opacity:.6}
 .route .note{margin:0}
 .reqs .lab{margin:14px 0 0}
 .req{padding:10px 0;border-top:1px solid var(--line)}
 .req .top{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .req .top .note{margin:0}
-.req .txt{margin:4px 0;font-size:15px}
-.req .rep{margin:4px 0 6px;font-size:14px;background:var(--soft);border-radius:6px;padding:6px 10px}
-.badge{font-size:12px;font-weight:700;border-radius:99px;padding:1px 9px;border:1px solid var(--line-strong);background:#fff;color:var(--ink-soft);white-space:nowrap}
+.req .txt{margin:4px 0;font-size:0.9375rem}
+.req .rep{margin:4px 0 6px;font-size:0.875rem;background:var(--soft);border-radius:6px;padding:6px 10px}
+.badge{font-size:0.75rem;font-weight:700;border-radius:99px;padding:1px 9px;border:1px solid var(--line-strong);background:#fff;color:var(--ink-soft);white-space:nowrap}
 .badge.send,.badge.unsent{color:var(--warn);border-color:var(--warn-line)}
 .badge.working,.badge.building,.badge.included{color:#1d6b4f;border-color:#8fcfb5;background:#e6f6ef}
 .badge.needs-you{color:#fff;background:var(--warn);border-color:var(--warn)}
 .badge.result,.badge.ready{color:var(--accent-edge);border-color:#a9c98f;background:#e4efd6}
 .ideaAdd{margin:0 0 12px}
 .ideaAdd .row{flex-wrap:nowrap;margin-top:4px}
-.ideaAdd input{flex:1;min-width:0;font:inherit;font-size:15px;min-height:44px;border:2px solid var(--line-strong);border-radius:8px;padding:8px 12px;background:#fff;color:var(--ink)}
+.ideaAdd input{flex:1;min-width:0;font:inherit;font-size:0.9375rem;min-height:44px;border:2px solid var(--line-strong);border-radius:8px;padding:8px 12px;background:#fff;color:var(--ink)}
 .ideas{list-style:none;margin:0;padding:0}
-.ideas li{display:flex;gap:10px;align-items:center;padding:4px 0;border-top:1px solid var(--line);font-size:15px}
+.ideas li{display:flex;gap:10px;align-items:center;padding:4px 0;border-top:1px solid var(--line);font-size:0.9375rem}
 .ideas li:first-child{border-top:0}
 .ideas label{display:flex;gap:10px;align-items:center;flex:1;cursor:pointer;min-height:40px}
 .ideas input{width:20px;height:20px;accent-color:var(--accent);flex:none}
@@ -149,23 +155,55 @@ ol.queue li{margin:4px 0}
 .buildBox .sub{margin:0 0 8px}
 
 /* feed */
-.feed div{display:flex;gap:10px;font-size:14px;padding:6px 0;border-top:1px solid var(--line)}
+.feed div{display:flex;gap:10px;font-size:0.875rem;padding:6px 0;border-top:1px solid var(--line)}
 .feed div:first-child{border-top:0}
+.feed div>span{flex:1;min-width:0}
+.feed b{display:block}
 .feed time{color:var(--muted);white-space:nowrap;min-width:70px}
-footer{max-width:1100px;margin:0 auto;padding:4px 16px 28px;font-size:13px;color:var(--muted)}
+footer{max-width:1100px;margin:0 auto;padding:4px 16px 28px;font-size:0.8125rem;color:var(--muted)}
 
 /* tour: the step's part of the page is lit, everything else dims */
 .spot{position:relative;z-index:1001;box-shadow:0 0 0 4px var(--tour),0 0 0 9999px rgba(43,33,22,.6)!important;border-radius:10px}
 #tourCatch{position:fixed;inset:0;z-index:1000}
 #tourCard{position:fixed;z-index:1002;left:50%;bottom:16px;transform:translateX(-50%);width:min(440px,calc(100% - 32px));
   background:var(--panel);border:2px solid var(--ink);border-radius:10px;padding:14px 16px;box-shadow:6px 6px 0 rgba(43,42,38,.85)}
-#tourCard .step{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--warn);margin:0 0 2px}
-#tourCard h3{font-size:19px;margin:0 0 6px}
-#tourCard p{margin:0 0 8px;font-size:15px}
-#tourCard .why{background:var(--soft);border-radius:6px;padding:8px 10px;font-size:14px}
+#tourCard .step{font-size:0.75rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--warn);margin:0 0 2px}
+#tourCard h3{font-size:1.1875rem;margin:0 0 6px}
+#tourCard p{margin:0 0 8px;font-size:0.9375rem}
+#tourCard .why{background:var(--soft);border-radius:6px;padding:8px 10px;font-size:0.875rem}
 #tourCard .row{margin-top:12px}
 #tourCard .skip{margin-inline-start:auto}
+html[dir=rtl] [data-bidi]{text-align:right}
+html[dir=ltr] [data-bidi]{text-align:left}
 [dir=rtl] .stat small,[dir=rtl] .needs .kicker,[dir=rtl] #tourCard .step{letter-spacing:0}
+/* feedback: three questions, then WhatsApp opens with the message ready */
+#fbDlg{--fbfs:1.0625rem;font-size:var(--fbfs);border:0;border-radius:16px;padding:1.3em 1.3em 1.1em;width:min(32em,calc(100% - 32px));background:var(--panel);color:var(--ink);box-shadow:var(--shadow-modal);line-height:1.5}
+#fbDlg::backdrop{background:rgba(43,42,38,.45)}
+#fbDlg .top{display:flex;flex-wrap:wrap;align-items:flex-start;gap:.5em .75em;margin:0 0 .2em}
+#fbDlg h3{flex:1 1 6em;min-width:0;margin:0;font-size:1.4em;line-height:1.25}
+#fbDlg .sizeCtl button{border:2px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+#fbDlg .sizeCtl button:hover{border-color:var(--line-strong)}
+#fbDlg .hint{margin:0 0 1em;color:var(--muted);font-size:.9em}
+#fbDlg .qc{border:1px solid var(--line);border-radius:12px;background:#fff;padding:.85em 1em 1em;margin:0 0 .7em;transition:border-color .15s}
+#fbDlg .qc:focus-within{border-color:var(--accent)}
+#fbDlg .qh{display:flex;align-items:center;gap:.6em;font-weight:700;font-size:1.05em;margin:0 0 .6em;padding:0}
+#fbDlg .n{flex:none;display:inline-flex;align-items:center;justify-content:center;width:1.7em;height:1.7em;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-size:.85em}
+#fbDlg .rate{display:flex;gap:.4em}
+#fbDlg .rate label{flex:1 1 0;min-width:0;max-width:3.2em}
+#fbDlg .rate input{position:absolute;opacity:0;width:1px;height:1px}
+#fbDlg .rate span{display:flex;align-items:center;justify-content:center;width:100%;height:2.6em;min-height:44px;border:2px solid var(--line-strong);border-radius:10px;background:var(--panel);cursor:pointer;font-weight:700;transition:background .15s,border-color .15s}
+#fbDlg .rate span:hover{border-color:var(--accent)}
+#fbDlg .rate input:checked+span{background:var(--accent);border-color:var(--accent-edge);color:var(--accent-ink)}
+#fbDlg .rate input:focus-visible+span{outline:3px solid var(--tour);outline-offset:2px}
+#fbDlg .scale{font-size:.82em;color:var(--muted);margin:.45em 0 0}
+#fbDlg textarea{display:block;width:100%;min-height:4.6em;resize:vertical;border:2px solid var(--line);border-radius:10px;padding:.55em .7em;font:inherit;line-height:1.5;background:var(--panel);margin:0}
+#fbDlg textarea::placeholder{color:var(--muted);opacity:.8}
+#fbDlg textarea:focus{outline:none;border-color:var(--accent);background:#fff}
+#fbDlg .row{display:flex;gap:.5em;flex-wrap:wrap;align-items:center;margin-top:1em}
+#fbDlg .row .btn,#fbDlg .row .btn2{font-size:1em;min-height:44px}
+#fbDlg .note{font-size:.82em;color:var(--muted);margin:.7em 0 0}
+#fbSend[disabled]{cursor:not-allowed}
+@media (prefers-reduced-motion:reduce){#fbDlg .qc,#fbDlg .rate span{transition:none}}
 @media (prefers-reduced-motion:reduce){.hl,.hr,.ln,.zz,.tourBtn.fresh{animation:none}}
 </style>
 </head>
@@ -180,6 +218,10 @@ footer{max-width:1100px;margin:0 auto;padding:4px 16px 28px;font-size:13px;color
   <div class="barEnd">
     <button class="langBtn" id="fbBtn" type="button" data-t="fbBtn"></button>
     <button class="langBtn" id="langBtn" type="button"></button>
+    <div class="sizeCtl" role="group" data-ta="txtSize">
+      <button type="button" class="langBtn sm smaller" data-ta="txtSmaller" data-t="txtA"></button>
+      <button type="button" class="langBtn lg bigger" data-ta="txtBigger" data-t="txtA"></button>
+    </div>
     <button class="tourBtn" id="tourBtn" type="button" data-t="tourBtn"></button>
   </div>
 </div></div>
@@ -201,7 +243,7 @@ footer{max-width:1100px;margin:0 auto;padding:4px 16px 28px;font-size:13px;color
       <span class="lab" data-t="goesTo"></span>
       <label class="sr" for="askProject" data-t="srProject"></label><select id="askProject"></select>
       <label class="sr" for="askTarget" data-t="srTarget"></label><select id="askTarget"></select>
-      <span class="note" id="routeWhy" dir="auto"></span>
+      <span class="note" id="routeWhy" data-bidi></span>
     </div>
     <div class="row">
       <button class="btn" id="askSend" type="button" data-t="askSend"></button>
@@ -218,9 +260,9 @@ footer{max-width:1100px;margin:0 auto;padding:4px 16px 28px;font-size:13px;color
     <div class="sceneBox" id="sceneBox">
       <div class="scene"><svg id="scene" shape-rendering="crispEdges" role="img" data-ta="sceneAria"></svg></div>
       <div class="bubble" id="bubble" role="dialog" aria-labelledby="bTitle" hidden>
-        <b id="bTitle" dir="auto"></b>
+        <b id="bTitle" data-bidi></b>
         <div class="meta" id="bMeta"></div>
-        <p class="what" id="bWhat" dir="auto"></p>
+        <p class="what" id="bWhat" data-bidi></p>
         <div class="row" id="bActions"></div>
       </div>
     </div>
@@ -234,12 +276,12 @@ footer{max-width:1100px;margin:0 auto;padding:4px 16px 28px;font-size:13px;color
 
   <section class="panel needs" id="nowCard">
     <p class="kicker" id="nowHead"></p>
-    <p class="lab topic" id="nowTopic" dir="auto" hidden></p>
-    <p class="big" id="nowName" dir="auto"></p>
+    <p class="lab topic" id="nowTopic" data-bidi hidden></p>
+    <p class="big" id="nowName" data-bidi></p>
     <div class="whyBox" id="nowWhy" hidden>
       <p class="lab" data-t="whyLab"></p>
-      <p class="sub" id="nowWhy1" dir="auto"></p>
-      <p class="sub" id="nowWhy2" dir="auto"></p>
+      <p class="sub" id="nowWhy1" data-bidi></p>
+      <p class="sub" id="nowWhy2" data-bidi></p>
     </div>
     <p class="pick" id="nowPick" hidden></p>
     <div class="row" id="nowActions" hidden>
@@ -281,7 +323,7 @@ footer{max-width:1100px;margin:0 auto;padding:4px 16px 28px;font-size:13px;color
     </form>
     <ul class="ideas" id="ideaList"></ul>
     <div class="buildBox" id="buildBox">
-      <p class="sub" id="buildLine" dir="auto"></p>
+      <p class="sub" id="buildLine" data-bidi></p>
       <div class="row">
         <button class="btn" id="buildBtn" type="button"></button>
         <button class="textBtn" id="buildCancel" type="button" data-t="buildCancel" hidden></button>
@@ -293,6 +335,43 @@ footer{max-width:1100px;margin:0 auto;padding:4px 16px 28px;font-size:13px;color
 </main>
 
 <footer data-t="footer"></footer>
+
+<dialog id="fbDlg" aria-labelledby="fbTitle">
+  <form id="fbForm">
+    <div class="top">
+      <h3 id="fbTitle" data-t="fbTitle"></h3>
+      <div class="sizeCtl" role="group" data-ta="txtSize">
+        <button type="button" class="sm smaller" data-ta="txtSmaller" data-t="txtA"></button>
+        <button type="button" class="lg bigger" data-ta="txtBigger" data-t="txtA"></button>
+      </div>
+    </div>
+    <p class="hint" data-t="fbHint"></p>
+    <div class="qc" role="radiogroup" aria-labelledby="fbRateQ">
+      <div class="qh" id="fbRateQ"><span class="n" aria-hidden="true">1</span><span data-t="fbRate"></span></div>
+      <div class="rate">
+        <label><input type="radio" name="fbRate" value="1"><span>1</span></label>
+        <label><input type="radio" name="fbRate" value="2"><span>2</span></label>
+        <label><input type="radio" name="fbRate" value="3"><span>3</span></label>
+        <label><input type="radio" name="fbRate" value="4"><span>4</span></label>
+        <label><input type="radio" name="fbRate" value="5"><span>5</span></label>
+      </div>
+      <p class="scale" data-t="fbScale"></p>
+    </div>
+    <div class="qc">
+      <label class="qh" for="fbGood"><span class="n" aria-hidden="true">2</span><span data-t="fbGood"></span></label>
+      <textarea id="fbGood" maxlength="600" data-tp="fbGoodEx"></textarea>
+    </div>
+    <div class="qc">
+      <label class="qh" for="fbBad"><span class="n" aria-hidden="true">3</span><span data-t="fbBad"></span></label>
+      <textarea id="fbBad" maxlength="600" data-tp="fbBadEx"></textarea>
+    </div>
+    <div class="row">
+      <button class="btn" id="fbSend" type="submit" data-t="fbSend"></button>
+      <button class="btn2" id="fbCancel" type="button" data-t="fbCancel"></button>
+    </div>
+    <p class="note" data-t="fbNote"></p>
+  </form>
+</dialog>
 
 <div id="tourCatch" hidden></div>
 <div id="tourCard" role="dialog" aria-modal="true" aria-labelledby="tTitle" hidden>
@@ -314,7 +393,7 @@ const PASTE = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent |
 /* every word on the page, in both languages. One name per thing: chat, desk, request, idea, task list, the next version. */
 const STR = {
 he: {
-  brand:'המשרד', langBtn:'English', langAria:'החלפת השפה לאנגלית', tourBtn:'▶ סיור של דקה', fbBtn:'💬 פידבק',
+  brand:'המשרד', langBtn:'English', langAria:'החלפת השפה לאנגלית', tourBtn:'סיור של דקה ◀', fbBtn:'💬 פידבק', fbTitle:'מה דעתך על המשרד?', fbHint:'שלוש שאלות קצרות. אפשר לענות רק על חלק.', fbRate:'כמה הוא עוזר לך?', fbScale:'1 = בכלל לא, 5 = מאוד', fbGood:'מה עבד טוב?', fbBad:'מה תקע או חסר?', fbSend:'שליחה בוואטסאפ', fbCancel:'ביטול', fbNote:'וואטסאפ ייפתח עם ההודעה מוכנה. לוחצים שם "שלח".', fbMsgRate:'ציון', fbGoodEx:'למשל: ראיתי מהר מה מחכה לי', fbBadEx:'למשל: לא הבנתי מה הכפתור הירוק עושה', txtSize:'גודל הטקסט', txtA:'א', txtSmaller:'הקטנת הטקסט', txtBigger:'הגדלת הטקסט',
   sWork:'שיחות בעבודה', sWait:'מחכים לך', sAge:'עודכן', agoS: s => `לפני ${s} שנ'`,
   pulseConnecting:'מתחבר...', pulseOk:'מעודכן. הדף מתרענן לבד כל 10 שניות.',
   pulsePrivacy:'<span class="err">התצוגה מושהית.</span> הופיע בנתונים מידע פרטי, אז לא מוצג כלום.',
@@ -391,7 +470,7 @@ he: {
   toggleFail:'לא הצלחתי לשנות. אפשר לנסות שוב.', cancelled:'בוטל. הדף החי לא השתנה.',
   cancelRunning:'היא נבנית ממש עכשיו. צריך לעצור אותה קודם בשיחה שלה.', cancelFail:'לא הצלחתי לבטל.',
 
-  footer:'הדף קורא את הקבצים במחשב שלך כל 10 שניות, בלי מודל ובלי מכסה. הכפתורים רק שומרים טקסט ופותחים שיחה בקלוד. שום דבר לא רץ עד שלוחצים שם שלח. מהדף הזה שום דבר לא נשלח, לא משולם ולא מתפרסם. רוצה לספר מה עבד ומה לא? לוחצים למעלה על "פידבק". קלוד שואל 6 שאלות קצרות ומכין הודעה שאתה שולח בעצמך.',
+  footer:'הדף קורא את הקבצים במחשב שלך כל 10 שניות, בלי מודל ובלי מכסה. הכפתורים רק שומרים טקסט ופותחים שיחה בקלוד. שום דבר לא רץ עד שלוחצים שם שלח. מהדף הזה שום דבר לא נשלח, לא משולם ולא מתפרסם. רוצה לספר מה עבד ומה לא? לוחצים למעלה על "פידבק", עונים על שלוש שאלות, וההודעה נפתחת בוואטסאפ מוכנה לשליחה.',
 
   tStep: (i, n) => `שלב ${i} מתוך ${n}`, whyHere:'למה זה כאן:', back:'הקודם', next:'הבא', gotIt:'הבנתי', skipTour:'לדלג על הסיור',
   't1.title':'המצב בשתי שניות',
@@ -433,7 +512,7 @@ he: {
   's.tasks':'רשימת המשימות', 's.updated': n => `עודכן: ${n}`,
 },
 en: {
-  brand:'The office', langBtn:'עברית', langAria:'Switch the page to Hebrew', tourBtn:'▶ 1-minute tour', fbBtn:'💬 Feedback',
+  brand:'The office', langBtn:'עברית', langAria:'Switch the page to Hebrew', tourBtn:'▶ 1-minute tour', fbBtn:'💬 Feedback', fbTitle:'What do you think of the office?', fbHint:'Three short questions. Answer only the ones you want.', fbRate:'How much does it help you?', fbScale:'1 = not at all, 5 = a lot', fbGood:'What worked well?', fbBad:'What got stuck or is missing?', fbSend:'Send on WhatsApp', fbCancel:'Cancel', fbNote:'WhatsApp opens with the message ready. Press Send there.', fbMsgRate:'Rating', fbGoodEx:'For example: I quickly saw what was waiting for me', fbBadEx:'For example: I did not get what the green button does', txtSize:'Text size', txtA:'A', txtSmaller:'Smaller text', txtBigger:'Bigger text',
   sWork:'Chats working', sWait:'Waiting on you', sAge:'Updated', agoS: s => `${s}s ago`,
   pulseConnecting:'Connecting...', pulseOk:'Up to date. Refreshes itself every 10 seconds.',
   pulsePrivacy:'<span class="err">View paused.</span> Something private showed up in the data, so nothing is shown.',
@@ -510,7 +589,7 @@ en: {
   toggleFail:'Couldn\'t change it. Try again.', cancelled:'Cancelled. The live page never changed.',
   cancelRunning:'It\'s building right now. Stop it in its own chat first.', cancelFail:'Couldn\'t cancel it.',
 
-  footer:'This page reads the files on your computer every 10 seconds, with no model and no quota. The buttons only save text and open a chat in Claude. Nothing runs until you press Send there. Nothing is sent, paid for or published from this page. Want to tell us what worked and what didn\'t? Press "Feedback" at the top. Claude asks 6 short questions and writes a message you send yourself.',
+  footer:'This page reads the files on your computer every 10 seconds, with no model and no quota. The buttons only save text and open a chat in Claude. Nothing runs until you press Send there. Nothing is sent, paid for or published from this page. Want to tell us what worked and what didn\'t? Press "Feedback" at the top, answer three questions, and the message opens in WhatsApp ready to send.',
 
   tStep: (i, n) => `Step ${i} of ${n}`, whyHere:'Why it\'s here:', back:'Back', next:'Next', gotIt:'Got it', skipTour:'Skip the tour',
   't1.title':'Where things stand, in 2 seconds',
@@ -727,7 +806,7 @@ function drawNow(){
   $('nowWhy1').textContent = it.whyAuto ? (tx(why[0]) || t('whyWaiting')) : tx(why[0]);
   $('nowWhy2').textContent = it.whyAuto ? t('whyChat') : tx(why[1]);
   $('nowPick').hidden = !it.pick;
-  if (it.pick) $('nowPick').innerHTML = `<b>${esc(t('pick', t(it.pick === 'yes' ? 'yes' : 'no')))}</b> <span dir="auto">${esc(tx(it.pickWhy))}</span>`;
+  if (it.pick) $('nowPick').innerHTML = `<b>${esc(t('pick', t(it.pick === 'yes' ? 'yes' : 'no')))}</b> <span data-bidi>${esc(tx(it.pickWhy))}</span>`;
   $('quickBtns').hidden = !it.quick;
   $('aYes').classList.toggle('rec', it.pick === 'yes'); $('aNo').classList.toggle('rec', it.pick === 'no');
   const go = $('nowGo');
@@ -737,14 +816,14 @@ function drawNow(){
   $('nowNote').textContent = it.quick ? t('noteQuick') : (it.chat ? t('noteChat') : t('noteNew')) + t('noteLater');
   $('queueBtn').textContent = open ? t('hideList') : t('showList', top, w.length);
   $('queueBtn').setAttribute('aria-expanded', String(open));
-  $('queue').innerHTML = w.slice(0, top).map(x => `<li dir="auto">${esc(tx(x.name))}${x.main?`<span class="tag">${esc(t('tagMain'))}</span>`:''}${x.money?`<span class="tag">${esc(t('tagMoney'))}</span>`:''}</li>`).join('')
+  $('queue').innerHTML = w.slice(0, top).map(x => `<li><span data-bidi>${esc(tx(x.name))}</span>${x.main?`<span class="tag">${esc(t('tagMain'))}</span>`:''}${x.money?`<span class="tag">${esc(t('tagMoney'))}</span>`:''}</li>`).join('')
     + (w.length > top ? `<li style="list-style:none;color:var(--muted)">${esc(t('more', w.length - top))}</li>` : '');
 }
 
 function drawFeed(){
   const f = data?.feed || [];
   $('feed').innerHTML = f.length
-    ? f.map(x => `<div><time datetime="${esc(x.at)}">${esc(ago(x.at))}</time><span dir="auto"><b>${esc(L(x, 'who'))}:</b> ${esc(L(x, 'what'))}</span></div>`).join('')
+    ? f.map(x => `<div><time datetime="${esc(x.at)}">${esc(ago(x.at))}</time><span><b data-bidi>${esc(L(x, 'who'))}</b><span data-bidi>${esc(L(x, 'what'))}</span></span></div>`).join('')
     : `<div>${esc(privacy ? t('feedPrivacy') : data ? t('feedQuiet') : t('notRead'))}</div>`;
 }
 
@@ -794,7 +873,49 @@ function applyLang(){
   drawPics();
   if (tIdx >= 0) tourShow(tIdx);
 }
-$('fbBtn').addEventListener('click', () => { const l = data?.feedback?.[lang]; if (l) location.href = l; });
+// feedback goes straight to the person who shared the office; WhatsApp opens with the text, the user presses Send there
+const FEEDBACK_WA = '972546969503';
+function fbFill(){
+  const r = document.querySelector('input[name=fbRate]:checked');
+  $('fbSend').disabled = !r && !$('fbGood').value.trim() && !$('fbBad').value.trim();
+}
+// text size: one setting for the whole page, remembered per viewer
+const TEXT_SIZES = [87.5, 100, 112.5, 125, 140];
+let textSize = 1;
+try { const v = localStorage.getItem('officeTextSize'); if (v !== null && TEXT_SIZES[Number(v)]) textSize = Number(v); } catch (e) {}
+function setTextSize(i){
+  textSize = Math.max(0, Math.min(TEXT_SIZES.length - 1, i));
+  document.documentElement.style.fontSize = TEXT_SIZES[textSize] + '%';
+  document.querySelectorAll('.sizeCtl .smaller').forEach(b => b.disabled = textSize === 0);
+  document.querySelectorAll('.sizeCtl .bigger').forEach(b => b.disabled = textSize === TEXT_SIZES.length - 1);
+  try { localStorage.setItem('officeTextSize', String(textSize)); } catch (e) {}
+}
+document.querySelectorAll('.sizeCtl .smaller').forEach(b => b.addEventListener('click', () => setTextSize(textSize - 1)));
+document.querySelectorAll('.sizeCtl .bigger').forEach(b => b.addEventListener('click', () => setTextSize(textSize + 1)));
+setTextSize(textSize);
+// reading direction of live text: mostly-Hebrew text reads right to left, the rest left to right, a tie follows the page
+const HE_CH = /[֐-׿]/g, LA_CH = /[A-Za-z]/g;
+function fixBidi(){
+  document.querySelectorAll('[data-bidi]').forEach(n => {
+    const s = n.textContent, he = (s.match(HE_CH) || []).length, la = (s.match(LA_CH) || []).length;
+    const d = he > la ? 'rtl' : la > he ? 'ltr' : document.documentElement.dir;
+    if (n.dir !== d) n.dir = d;
+  });
+}
+new MutationObserver(fixBidi).observe(document.body, { childList: true, subtree: true, characterData: true });
+$('fbBtn').addEventListener('click', () => { fbFill(); $('fbDlg').showModal(); });
+$('fbForm').addEventListener('input', fbFill);
+$('fbCancel').addEventListener('click', () => $('fbDlg').close());
+$('fbForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const r = document.querySelector('input[name=fbRate]:checked'), good = $('fbGood').value.trim(), bad = $('fbBad').value.trim();
+  const lines = ['#פידבק-משרד' + (data?.version ? ' v' + data.version : '')];
+  if (r) lines.push(t('fbMsgRate') + ': ' + r.value + '/5');
+  if (good) lines.push(t('fbGood') + ' ' + good);
+  if (bad) lines.push(t('fbBad') + ' ' + bad);
+  window.open('https://wa.me/' + FEEDBACK_WA + '?text=' + encodeURIComponent(lines.join('\n')), '_blank', 'noopener');
+  $('fbDlg').close(); $('fbForm').reset();
+});
 $('langBtn').addEventListener('click', () => {
   lang = lang === 'he' ? 'en' : 'he'; langChosen = true;
   try { localStorage.setItem('officeLang', lang); } catch (e) {}
@@ -935,9 +1056,9 @@ function drawAsk(){
   const rq = data?.requests || [];
   $('reqList').innerHTML = !rq.length ? '' : `<p class="lab">${esc(t('reqTitle'))}</p>` + rq.map(r => `<div class="req">
     <div class="top"><span class="badge ${esc(r.state)}">${esc(STR[lang]['req.' + r.state] ? t('req.' + r.state) : r.state)}</span>
-      <span class="note">${esc(ago(r.at))} · <span dir="auto">${esc(reqProject(r))}</span>${r.mode === 'continue' ? esc(t('sameChat')) : ''}</span></div>
-    <p class="txt" dir="auto">${esc(L(r, 'text'))}</p>
-    ${r.reply || r.replyKey ? `<p class="rep" dir="auto">${esc(L(r, 'reply'))}</p>` : `<p class="note" dir="auto">${esc(L(r, 'line'))}</p>`}
+      <span class="note">${esc(ago(r.at))} · <span data-bidi>${esc(reqProject(r))}</span>${r.mode === 'continue' ? esc(t('sameChat')) : ''}</span></div>
+    <p class="txt" data-bidi>${esc(L(r, 'text'))}</p>
+    ${r.reply || r.replyKey ? `<p class="rep" data-bidi>${esc(L(r, 'reply'))}</p>` : `<p class="note" data-bidi>${esc(L(r, 'line'))}</p>`}
     <div class="row">${r.chat ? `<a class="btn2 sm" href="${esc(r.chat)}">${esc(t('openChat'))}</a>` : ''}
       ${r.state === 'send' || r.state === 'unsent' ? `<button class="btn2 sm" type="button" data-reopen="${esc(r.id)}">${esc(t('openAgain'))}</button>` : ''}
       ${r.local ? `<button class="textBtn" type="button" data-follow="${esc(r.local)}">${esc(t('follow'))}</button>` : ''}</div>
@@ -1068,8 +1189,8 @@ function drawNext(){
   $('ideaList').innerHTML = ideas.length ? ideas.map(i => {
     const edit = i.state === 'queued' || i.state === 'included';
     return `<li>${edit
-      ? `<label><input type="checkbox" data-idea="${esc(i.id)}" ${i.state === 'included' ? 'checked' : ''}><span dir="auto">${esc(L(i, 'text'))}</span></label>`
-      : `<span dir="auto" style="flex:1">${esc(L(i, 'text'))}</span><span class="badge ${esc(i.state)}">${esc(STR[lang]['il.' + i.state] ? t('il.' + i.state) : i.state)}</span>`}</li>`;
+      ? `<label><input type="checkbox" data-idea="${esc(i.id)}" ${i.state === 'included' ? 'checked' : ''}><span data-bidi>${esc(L(i, 'text'))}</span></label>`
+      : `<span data-bidi style="flex:1">${esc(L(i, 'text'))}</span><span class="badge ${esc(i.state)}">${esc(STR[lang]['il.' + i.state] ? t('il.' + i.state) : i.state)}</span>`}</li>`;
   }).join('') : `<li class="note">${esc(t('noIdeas'))}</li>`;
   $('ideaList').querySelectorAll('[data-idea]').forEach(c => c.onchange = async () => {
     c.disabled = true;
@@ -1079,7 +1200,7 @@ function drawNext(){
   });
   const open = b && !['ready', 'cancelled'].includes(b.state);
   $('buildLine').innerHTML = b
-    ? `<span class="badge ${esc(b.state)}">${esc(STR[lang]['bl.' + b.state] ? t('bl.' + b.state) : b.state)}</span> <span class="note">${esc(t('ideasN', b.count) + t('started', ago(b.at)))}</span><br><span dir="auto">${esc(L(b, 'line'))}</span>`
+    ? `<span class="badge ${esc(b.state)}">${esc(STR[lang]['bl.' + b.state] ? t('bl.' + b.state) : b.state)}</span> <span class="note">${esc(t('ideasN', b.count) + t('started', ago(b.at)))}</span><br><span data-bidi>${esc(L(b, 'line'))}</span>`
     : esc(t('noBuild'));
   const inc = ideas.filter(i => i.state === 'included').length;
   $('buildBtn').textContent = open ? t('buildOpen') : t('buildNew', inc);
@@ -1127,6 +1248,7 @@ setInterval(drawPulse, 1000);
 setInterval(() => { if (!document.hidden) refresh(); }, 10000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
 applyLang();
+fixBidi();
 refresh();
 </script>
 </body>
