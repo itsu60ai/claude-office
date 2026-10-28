@@ -91,6 +91,7 @@ main{max-width:1100px;margin:0 auto;padding:14px 16px;display:grid;gap:14px;
 .big{font-size:19px;font-weight:700;margin:0 0 4px}
 .sub{color:var(--ink-soft);font-size:15px;margin:0 0 12px}
 .lab{font-size:13px;font-weight:700;color:var(--ink-soft);margin:6px 0 0}
+.needs .topic{margin:0 0 2px}
 .note{font-size:13px;color:var(--muted);margin:10px 0 0}
 ol.queue{margin:4px 0 0;padding:0;padding-inline-start:20px;font-size:15px}
 ol.queue li{margin:4px 0}
@@ -229,6 +230,7 @@ footer{max-width:1100px;margin:0 auto;padding:4px 16px 28px;font-size:13px;color
 
   <section class="panel needs" id="nowCard">
     <p class="kicker" id="nowHead"></p>
+    <p class="lab topic" id="nowTopic" dir="auto" hidden></p>
     <p class="big" id="nowName" dir="auto"></p>
     <div class="whyBox" id="nowWhy" hidden>
       <p class="lab" data-t="whyLab"></p>
@@ -694,6 +696,7 @@ function drawNow(){
   if (!has) {
     $('nowHead').textContent = t('nowKicker');
     $('nowName').textContent = data ? t('nothingWaiting') : (privacy ? t('hiddenPrivacy') : t('loading'));
+    $('nowTopic').hidden = true;
     $('nowPick').hidden = true; $('laterRow').hidden = true; $('queue').hidden = true; cardId = null;
     return;
   }
@@ -701,6 +704,11 @@ function drawNow(){
   const it = w[nowIdx], top = Math.min(5, w.length), open = !$('queue').hidden;
   if (it.id !== cardId) { cardId = it.id; nonce = newNonce(); $('laterRow').hidden = true; $('aLater').setAttribute('aria-expanded','false'); }
   $('nowHead').textContent = t('nowKickerN', w.length, nowIdx);
+  // the question alone can be read cold, so the project and topic sit above it
+  const topic = it.ask ? tx(it.name) : '';
+  const pr = (data?.projects || []).find(x => x.id === it.pid);
+  $('nowTopic').textContent = [pr ? projName(pr) : it.project, topic].filter(Boolean).join(' · ');
+  $('nowTopic').hidden = !$('nowTopic').textContent;
   $('nowName').textContent = tx(it.ask) || tx(it.name);
   const why = it.why || [];
   $('nowWhy1').textContent = it.whyAuto ? (tx(why[0]) || t('whyWaiting')) : tx(why[0]);

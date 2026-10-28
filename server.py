@@ -412,7 +412,7 @@ def waiting(clean):
         q = "I want to move forward on %s (%s) from tasks.json in the office folder. Tell me briefly where it stands." % (
             it["id"], plain(name))
         chat = it.get("chat") if isinstance(it.get("chat"), str) and re.fullmatch(r"local_[0-9a-f-]{36}", it["chat"]) else None
-        rows.append({"id": it["id"], "name": name, "next": nxt, "project": projs[p]["name"],
+        rows.append({"id": it["id"], "name": name, "next": nxt, "project": projs[p]["name"], "pid": p,
                      "main": bool(it.get("main")), "money": bool(it.get("money")),
                      "quick": quick, "ask": two(clean, it.get("ask"), 120),
                      "why": [two(clean, w, 160, "") for w in why[:2]], "whyAuto": auto,

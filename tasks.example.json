@@ -2,19 +2,22 @@
   "items": [
     {
       "id": "TASK-1",
-      "name": {"he": "צבע הלוגו לדף הנחיתה", "en": "Logo color for the landing page"},
-      "ask": {"he": "ללכת על הלוגו הירוק?", "en": "Go with the green version of the logo?"},
-      "why": [{"he": "קלוד הכין שתי גרסאות. הירוקה בולטת יותר על הרקע הלבן.", "en": "Claude made two versions. The green one reads better on the white background."}],
+      "name": {"he": "האתר של העסק: התמונה בראש דף הבית", "en": "Business website: the image at the top of the home page"},
+      "ask": {"he": "להחליף את התמונה בראש דף הבית בתמונה של החנות מבפנים?", "en": "Replace the image at the top of the home page with a photo of the inside of the shop?"},
+      "why": [
+        {"he": "היום יש שם תמונה של מוצר אחד, ומי שנכנס לא מבין מיד מה העסק מוכר.", "en": "Right now it shows one product, so visitors don't see right away what the business sells."},
+        {"he": "אחרי \"כן\" קלוד מחליף רק את התמונה. הטקסט והכפתורים נשארים כמו שהם.", "en": "After a \"yes\" Claude swaps only the image. The text and buttons stay as they are."}
+      ],
       "quick": true,
       "pick": "yes",
-      "pickWhy": {"he": "הוא באותו צבע של הכפתורים שכבר בדף.", "en": "It matches the buttons already on the page."},
+      "pickWhy": {"he": "בתמונה של החנות רואים בשנייה מה יש בה.", "en": "A photo of the shop shows in a second what's inside."},
       "project": "main",
       "status": "waiting"
     },
     {
       "id": "TASK-2",
-      "name": {"he": "מחיר לחבילת הפתיחה", "en": "Price for the starter package"},
-      "next": {"he": "לבחור מחיר לפני שהדף עולה לאוויר", "en": "Pick a price before the page goes live"},
+      "name": {"he": "האתר של העסק: מחיר לחבילת הפתיחה", "en": "Business website: price for the starter package"},
+      "next": {"he": "בדף המחירים חסר מחיר לחבילה הראשונה, ובלי מחיר הדף לא עולה. יש כמה אפשרויות, אז עדיף לסגור את זה בשיחה.", "en": "The pricing page has no price for the first package, and it can't go live without one. There are a few options, so it's better settled in a chat."},
       "quick": false,
       "project": "main",
       "status": "waiting"

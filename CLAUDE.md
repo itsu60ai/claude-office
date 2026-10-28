@@ -14,6 +14,12 @@ When you need a decision from the user, add it to `tasks.json` in this folder (c
  "chat": "<this chat's local_... id, if known>", "status": "waiting"}
 ```
 
+- Write every card for someone who was not in the chat and opens it cold, days later:
+  - `name` says what this is about: the thing and the part of it ("Business website: the top image"), not a bare label.
+  - `ask` names the actual thing and the actual change ("Replace the image at the top of the home page with a photo of the shop?"), never "Go with the green one?".
+  - First `why` line: what is happening now. Second: exactly what happens after a yes (and what stays the same).
+  - Plain everyday words. No ids, file names, internal names or tech terms unless the user uses them.
+  - Before saving, read the card alone. If a friend could not tell what they are agreeing to, rewrite it.
 - `id`: 2-8 capital letters, a dash, a number. Never reuse one.
 - Text fields (`name`, `ask`, each `why` line, `pickWhy`, `next`) can be a plain string or `{"he": "...", "en": "..."}`. The page shows the one that matches its language. Write the user's language at least; add both if they switch between them.
 - `quick: true` only for a real yes/no with no side effects you haven't described. Anything else: `quick: false` and a `next` line; the page sends the user to a chat for it.
