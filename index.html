@@ -1161,12 +1161,20 @@ function setTextSize(i){
 document.querySelectorAll('.sizeCtl .smaller').forEach(b => b.addEventListener('click', () => setTextSize(textSize - 1)));
 document.querySelectorAll('.sizeCtl .bigger').forEach(b => b.addEventListener('click', () => setTextSize(textSize + 1)));
 setTextSize(textSize);
-// reading direction of live text: mostly-Hebrew text reads right to left, the rest left to right, a tie follows the page
-const HE_CH = /[֐-׿]/g, LA_CH = /[A-Za-z]/g;
+// reading direction of live text, counted in words: mostly-Hebrew text reads right to left, the rest left to right, a tie follows the page.
+// A word with any Hebrew counts as Hebrew ("ל-Codex"); file names and code count as nothing, so one long path can't flip a Hebrew sentence.
+const HE_CH = /[֐-׿]/, LA_CH = /[A-Za-z]/, CODE_W = /[\/\\_.=<>{}]|\d|^[A-Z-]{5,}$/;
+function bidiDir(s){
+  let he = 0, la = 0;
+  for (const w of s.split(/\s+/)) {
+    if (HE_CH.test(w)) he++;
+    else if (LA_CH.test(w) && !CODE_W.test(w.replace(/^[("'\[]+|[.,:;!?)"'\]]+$/g, ''))) la++;
+  }
+  return he > la ? 'rtl' : la > he ? 'ltr' : document.documentElement.dir;
+}
 function fixBidi(){
   document.querySelectorAll('[data-bidi]').forEach(n => {
-    const s = n.textContent, he = (s.match(HE_CH) || []).length, la = (s.match(LA_CH) || []).length;
-    const d = he > la ? 'rtl' : la > he ? 'ltr' : document.documentElement.dir;
+    const d = bidiDir(n.textContent);
     if (n.dir !== d) n.dir = d;
   });
 }
