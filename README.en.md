@@ -64,6 +64,18 @@ The page picks up the change on its own. No restart.
 
 `CLAUDE.md` in this folder tells Claude how to add a question to `tasks.json` and how to read your answer. To make every chat aware of it, ask Claude: "Add the section from the office's CLAUDE.md to my global instructions." There's a sample in `tasks.example.json`. A question can be written in Hebrew, English or both, and the page shows it in the language you picked. Without a `tasks.json`, the card simply doesn't show.
 
+### Feedback
+
+The office is new, and it gets better from what you tell us. After a few days of use, open a Claude chat in the office folder and write:
+
+```
+feedback
+```
+
+Claude asks six short questions, one at a time: what you tried, where you got stuck, what you used most, how much you'd miss it, what you'd change, and which computer you're on. It strips names and personal details and gives you a ready message that starts with `#פידבק-משרד`. You copy it and send it to whoever shared the office with you, in private or in the group. Claude never sends anything itself.
+
+Have a GitHub account? You can also [fill in the form here](https://github.com/itsu60ai/claude-office/issues/new?template=feedback.yml).
+
 ### When something's off
 
 - **The page is empty, no desks.** The office shows chats from the last 24 hours. Open a Claude Code chat, write something, and wait a few seconds.
@@ -81,5 +93,6 @@ The page picks up the change on its own. No restart.
 | `office.example.json` | Sample settings. Yours live in `office.json` |
 | `tasks.example.json` | Sample questions waiting for you |
 | `README.md` | This guide in Hebrew |
-| `CLAUDE.md` | Instructions for Claude |
+| `CLAUDE.md` | Instructions for Claude, including how to collect feedback |
+| `VERSION` | The version number, added to every feedback message |
 | `state/` | Created on its own: request history, pictures and backups. Never committed |

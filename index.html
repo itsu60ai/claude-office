@@ -137,6 +137,9 @@ ol.queue li{margin:4px 0}
 .badge.working,.badge.building,.badge.included{color:#1d6b4f;border-color:#8fcfb5;background:#e6f6ef}
 .badge.needs-you{color:#fff;background:var(--warn);border-color:var(--warn)}
 .badge.result,.badge.ready{color:var(--accent-edge);border-color:#a9c98f;background:#e4efd6}
+.ideaAdd{margin:0 0 12px}
+.ideaAdd .row{flex-wrap:nowrap;margin-top:4px}
+.ideaAdd input{flex:1;min-width:0;font:inherit;font-size:15px;min-height:44px;border:2px solid var(--line-strong);border-radius:8px;padding:8px 12px;background:#fff;color:var(--ink)}
 .ideas{list-style:none;margin:0;padding:0}
 .ideas li{display:flex;gap:10px;align-items:center;padding:4px 0;border-top:1px solid var(--line);font-size:15px}
 .ideas li:first-child{border-top:0}
@@ -268,6 +271,13 @@ footer{max-width:1100px;margin:0 auto;padding:4px 16px 28px;font-size:13px;color
   <section class="panel" id="nextPanel">
     <h2 data-t="nextTitle"></h2>
     <p class="hint" data-t="nextHint"></p>
+    <form class="ideaAdd" id="ideaForm">
+      <label class="lab" for="ideaText" data-t="ideaLabel"></label>
+      <div class="row">
+        <input id="ideaText" type="text" dir="auto" maxlength="500" data-tp="ideaPh" autocomplete="off">
+        <button class="btn2" id="ideaSave" type="submit" data-t="ideaSave"></button>
+      </div>
+    </form>
     <ul class="ideas" id="ideaList"></ul>
     <div class="buildBox" id="buildBox">
       <p class="sub" id="buildLine" dir="auto"></p>
@@ -365,8 +375,9 @@ he: {
   feedTitle:'מה קרה לאחרונה', feedQuiet:'שקט. לא קרה כלום ב-24 השעות האחרונות.', feedPrivacy:'מוסתר בגלל פרטיות.', notRead:'עוד לא נקרא',
 
   nextTitle:'הגרסה הבאה של הדף',
-  nextHint:'יש רעיון לשיפור הדף? שומרים אותו כאן. שמירה לא מתחילה שום עבודה. כשמוכנים, מסמנים את הרעיונות ולוחצים "לבנות גרסה חדשה".',
-  noIdeas:'אין עדיין רעיונות. כותבים אחד בתיבה למעלה ולוחצים "שמירה כרעיון לגרסה הבאה".',
+  nextHint:'משהו בדף הזה מפריע לך או חסר לך? כותבים את זה כאן ושומרים. שמירה לא משנה כלום. כשמוכנים, לוחצים "לבנות גרסה חדשה" וקלוד בונה את כל הרעיונות המסומנים.',
+  ideaLabel:'הרעיון שלך', ideaPh:'למשל: שהכפתורים יהיו גדולים יותר', ideaSave:'שמירה',
+  noIdeas:'עוד אין רעיונות שמורים.',
   'il.building':'בבנייה', 'il.ready':'נבנה', noBuild:'עוד לא נבנתה גרסה.',
   'bl.send':'מחכה ללחיצה על שלח בשיחה שנפתחה', 'bl.building':'בבנייה עכשיו', 'bl.ready':'מוכנה בעותק הנפרד',
   'bl.needs-you':'נעצרה, מחכה לך', 'bl.cancelled':'בוטלה',
@@ -379,7 +390,7 @@ he: {
   toggleFail:'לא הצלחתי לשנות. אפשר לנסות שוב.', cancelled:'בוטל. הדף החי לא השתנה.',
   cancelRunning:'היא נבנית ממש עכשיו. צריך לעצור אותה קודם בשיחה שלה.', cancelFail:'לא הצלחתי לבטל.',
 
-  footer:'הדף קורא את הקבצים במחשב שלך כל 10 שניות, בלי מודל ובלי מכסה. הכפתורים רק שומרים טקסט ופותחים שיחה בקלוד. שום דבר לא רץ עד שלוחצים שם שלח. מהדף הזה שום דבר לא נשלח, לא משולם ולא מתפרסם.',
+  footer:'הדף קורא את הקבצים במחשב שלך כל 10 שניות, בלי מודל ובלי מכסה. הכפתורים רק שומרים טקסט ופותחים שיחה בקלוד. שום דבר לא רץ עד שלוחצים שם שלח. מהדף הזה שום דבר לא נשלח, לא משולם ולא מתפרסם. רוצה לספר מה עבד ומה לא? פותחים צ\'אט עם קלוד בתיקייה של המשרד וכותבים "פידבק".',
 
   tStep: (i, n) => `שלב ${i} מתוך ${n}`, whyHere:'למה זה כאן:', back:'הקודם', next:'הבא', gotIt:'הבנתי', skipTour:'לדלג על הסיור',
   't1.title':'המצב בשתי שניות',
@@ -483,8 +494,9 @@ en: {
   feedTitle:'What just happened', feedQuiet:'All quiet. Nothing happened in the last 24 hours.', feedPrivacy:'Hidden for privacy.', notRead:'Not read yet',
 
   nextTitle:'The next version of this page',
-  nextHint:'Got an idea to improve this page? Save it here. Saving starts no work. When you\'re ready, tick the ideas and press "Build the next version".',
-  noIdeas:'No ideas yet. Write one in the box above and press "Save as an idea for the next version".',
+  nextHint:'Something on this page bugs you or is missing? Write it here and save. Saving changes nothing. When you\'re ready, press "Build the next version" and Claude builds every ticked idea.',
+  ideaLabel:'Your idea', ideaPh:'For example: make the buttons bigger', ideaSave:'Save',
+  noIdeas:'No saved ideas yet.',
   'il.building':'In the build', 'il.ready':'Built', noBuild:'No version built yet.',
   'bl.send':'Waiting for Send in the chat that opened', 'bl.building':'Building now', 'bl.ready':'Ready in the separate copy',
   'bl.needs-you':'Stopped, waiting on you', 'bl.cancelled':'Cancelled',
@@ -497,7 +509,7 @@ en: {
   toggleFail:'Couldn\'t change it. Try again.', cancelled:'Cancelled. The live page never changed.',
   cancelRunning:'It\'s building right now. Stop it in its own chat first.', cancelFail:'Couldn\'t cancel it.',
 
-  footer:'This page reads the files on your computer every 10 seconds, with no model and no quota. The buttons only save text and open a chat in Claude. Nothing runs until you press Send there. Nothing is sent, paid for or published from this page.',
+  footer:'This page reads the files on your computer every 10 seconds, with no model and no quota. The buttons only save text and open a chat in Claude. Nothing runs until you press Send there. Nothing is sent, paid for or published from this page. Want to tell us what worked and what didn\'t? Open a Claude chat in the office folder and write "feedback".',
 
   tStep: (i, n) => `Step ${i} of ${n}`, whyHere:'Why it\'s here:', back:'Back', next:'Next', gotIt:'Got it', skipTour:'Skip the tour',
   't1.title':'Where things stand, in 2 seconds',
@@ -982,6 +994,7 @@ $('askIdea').addEventListener('click', async () => {
   try {
     const [ok, j] = await post('/api/idea', {text, nonce: askNonce});
     if (!ok) throw new Error(t('ideaFail'));
+    if (!j.duplicate) await post('/api/idea-include', {id: j.idea, include: true});
     askMsg(j.duplicate ? t('ideaDup') : t('ideaSaved'));
     $('askText').value = ''; askNonce = newNonce();
   } catch (e) { askMsg(e.message, true); }
@@ -1071,6 +1084,24 @@ function drawNext(){
   $('buildBtn').disabled = !open && !inc;
   $('buildCancel').hidden = !(open && b.state !== 'building');
 }
+let ideaNonce = newNonce();
+$('ideaForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const text = $('ideaText').value.trim();
+  if (nextBusy) return;
+  if (!text || text.length > 500) { nextMsg(t('ideaLen'), true); $('ideaText').focus(); return; }
+  nextBusy = true; $('ideaSave').disabled = true;
+  try {
+    const [ok, j] = await post('/api/idea', {text, nonce: ideaNonce});
+    if (!ok) throw new Error(t('ideaFail'));
+    // a new idea starts ticked, so the build button is ready right after saving
+    if (!j.duplicate) await post('/api/idea-include', {id: j.idea, include: true});
+    nextMsg(j.duplicate ? t('ideaDup') : t('ideaSaved'));
+    $('ideaText').value = ''; ideaNonce = newNonce();
+  } catch (err) { nextMsg(err.message, true); }
+  nextBusy = false; $('ideaSave').disabled = false;
+  await refresh();
+});
 $('buildBtn').addEventListener('click', async () => {
   if (nextBusy) return; nextBusy = true; $('buildBtn').disabled = true;
   try {

@@ -1,0 +1,42 @@
+name: פידבק על המשרד
+description: מה עבד, איפה נתקעת, מה היית משנה. שתי דקות.
+title: "#פידבק-משרד"
+labels: [feedback]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        תודה שאתה כותב. בלי שמות של פרויקטים, אנשים, מיילים או טלפונים.
+        אפשר גם לכתוב לקלוד "פידבק" בצ'אט בתיקייה של המשרד, והוא יעבור איתך על השאלות האלה.
+  - type: textarea
+    id: tried
+    attributes:
+      label: מה ניסית לעשות קודם עם המשרד, והצליח לך?
+    validations:
+      required: true
+  - type: textarea
+    id: stuck
+    attributes:
+      label: איפה נתקעת, או מה לא הבנת?
+  - type: textarea
+    id: most
+    attributes:
+      label: במה השתמשת הכי הרבה?
+  - type: input
+    id: miss
+    attributes:
+      label: מ-0 עד 10, כמה תתבאס אם המשרד ייעלם מחר? ולמה?
+      placeholder: "למשל: 7, כי סוף סוף אני רואה איזו שיחה מחכה לי"
+  - type: textarea
+    id: change
+    attributes:
+      label: דבר אחד שהיית משנה
+  - type: dropdown
+    id: system
+    attributes:
+      label: מחשב
+      options: [Windows, Mac]
+  - type: input
+    id: days
+    attributes:
+      label: כמה ימים בערך אתה משתמש בו?
