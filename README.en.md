@@ -34,7 +34,7 @@ Who's working, who got stuck, and what's waiting on you.
 <tr>
 <td width="50%" valign="top">
 
-### 🪑 A desk for every chat
+<p><b>🪑 A desk for every chat</b></p>
 <img src="assets/desks-en.png" width="100%" alt="Desks">
 
 See at a glance what each chat is doing: 🟢 working, 🟠 stopped, 🔵 done and waiting for you.
@@ -42,7 +42,7 @@ See at a glance what each chat is doing: 🟢 working, 🟠 stopped, 🔵 done a
 </td>
 <td width="50%" valign="top">
 
-### ✅ One-tap questions
+<p><b>✅ One-tap questions</b></p>
 <img src="assets/question-en.png" width="100%" alt="Question card">
 
 Claude needs a decision? It arrives as a card with Claude's pick. Yes, No, or Later.
@@ -52,7 +52,7 @@ Claude needs a decision? It arrives as a card with Claude's pick. Yes, No, or La
 <tr>
 <td colspan="2" valign="top">
 
-### ✍️ Ask Claude
+<p><b>✍️ Ask Claude</b></p>
 <img src="assets/ask-en.png" width="100%" alt="Request box">
 
 Write it in plain words. The page guesses the project and opens a chat with your text ready.
@@ -62,7 +62,7 @@ Write it in plain words. The page guesses the project and opens a chat with your
 <tr>
 <td colspan="2" valign="top">
 
-### 💡 Ideas for the next version
+<p><b>💡 Ideas for the next version</b></p>
 <p align="center"><img src="assets/next-en.png" width="55%" alt="Ideas for the next version"></p>
 
 Missing something? Write it down. Press Build, and Claude builds a new version on a separate copy.
