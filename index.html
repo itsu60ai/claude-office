@@ -552,6 +552,7 @@ function projColor(pid){
   let h = 0; for (const c of String(pid || 'other')) h = (h * 31 + c.charCodeAt(0)) >>> 0;
   return PALETTE[h % PALETTE.length];
 }
+function tx(v){ return v && typeof v === 'object' ? (v[lang] || v.he || v.en || '') : (v || ''); }
 function projName(p){ return p.id === 'new-project' ? t('newProject') : (lang === 'en' && p.nameEn) || p.name; }
 function officeName(){
   const o = data?.officeName;
@@ -700,12 +701,12 @@ function drawNow(){
   const it = w[nowIdx], top = Math.min(5, w.length), open = !$('queue').hidden;
   if (it.id !== cardId) { cardId = it.id; nonce = newNonce(); $('laterRow').hidden = true; $('aLater').setAttribute('aria-expanded','false'); }
   $('nowHead').textContent = t('nowKickerN', w.length, nowIdx);
-  $('nowName').textContent = it.ask || it.name;
+  $('nowName').textContent = tx(it.ask) || tx(it.name);
   const why = it.why || [];
-  $('nowWhy1').textContent = it.whyAuto ? (why[0] || t('whyWaiting')) : (why[0] || '');
-  $('nowWhy2').textContent = it.whyAuto ? t('whyChat') : (why[1] || '');
+  $('nowWhy1').textContent = it.whyAuto ? (tx(why[0]) || t('whyWaiting')) : tx(why[0]);
+  $('nowWhy2').textContent = it.whyAuto ? t('whyChat') : tx(why[1]);
   $('nowPick').hidden = !it.pick;
-  if (it.pick) $('nowPick').innerHTML = `<b>${esc(t('pick', t(it.pick === 'yes' ? 'yes' : 'no')))}</b> <span dir="auto">${esc(it.pickWhy || '')}</span>`;
+  if (it.pick) $('nowPick').innerHTML = `<b>${esc(t('pick', t(it.pick === 'yes' ? 'yes' : 'no')))}</b> <span dir="auto">${esc(tx(it.pickWhy))}</span>`;
   $('quickBtns').hidden = !it.quick;
   $('aYes').classList.toggle('rec', it.pick === 'yes'); $('aNo').classList.toggle('rec', it.pick === 'no');
   const go = $('nowGo');
@@ -715,7 +716,7 @@ function drawNow(){
   $('nowNote').textContent = it.quick ? t('noteQuick') : (it.chat ? t('noteChat') : t('noteNew')) + t('noteLater');
   $('queueBtn').textContent = open ? t('hideList') : t('showList', top, w.length);
   $('queueBtn').setAttribute('aria-expanded', String(open));
-  $('queue').innerHTML = w.slice(0, top).map(x => `<li dir="auto">${esc(x.name)}${x.main?`<span class="tag">${esc(t('tagMain'))}</span>`:''}${x.money?`<span class="tag">${esc(t('tagMoney'))}</span>`:''}</li>`).join('')
+  $('queue').innerHTML = w.slice(0, top).map(x => `<li dir="auto">${esc(tx(x.name))}${x.main?`<span class="tag">${esc(t('tagMain'))}</span>`:''}${x.money?`<span class="tag">${esc(t('tagMoney'))}</span>`:''}</li>`).join('')
     + (w.length > top ? `<li style="list-style:none;color:var(--muted)">${esc(t('more', w.length - top))}</li>` : '');
 }
 
@@ -1033,7 +1034,7 @@ $('askProject').addEventListener('change', () => { projTouched = true; drawRoute
 $('askTarget').addEventListener('change', drawRoute);
 $('nowAnswer').addEventListener('click', () => {
   const it = (data?.waiting || [])[nowIdx % Math.max(1, (data?.waiting || []).length)];
-  if (it) { const q = (it.ask || it.name).slice(0, 60); setTarget('item:' + it.id, () => t('tAnswer') + q); }
+  if (it) { const q = (tx(it.ask) || tx(it.name)).slice(0, 60); setTarget('item:' + it.id, () => t('tAnswer') + q); }
 });
 
 /* the next version: ideas wait; one build at a time, in a separate copy */

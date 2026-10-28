@@ -2,19 +2,19 @@
   "items": [
     {
       "id": "TASK-1",
-      "name": "Logo color for the landing page",
-      "ask": "Go with the green version of the logo?",
-      "why": ["Claude made two versions. The green one reads better on the white background."],
+      "name": {"he": "צבע הלוגו לדף הנחיתה", "en": "Logo color for the landing page"},
+      "ask": {"he": "ללכת על הלוגו הירוק?", "en": "Go with the green version of the logo?"},
+      "why": [{"he": "קלוד הכין שתי גרסאות. הירוקה בולטת יותר על הרקע הלבן.", "en": "Claude made two versions. The green one reads better on the white background."}],
       "quick": true,
       "pick": "yes",
-      "pickWhy": "It matches the buttons already on the page.",
+      "pickWhy": {"he": "הוא באותו צבע של הכפתורים שכבר בדף.", "en": "It matches the buttons already on the page."},
       "project": "main",
       "status": "waiting"
     },
     {
       "id": "TASK-2",
-      "name": "Price for the starter package",
-      "next": "Pick a price before the page goes live",
+      "name": {"he": "מחיר לחבילת הפתיחה", "en": "Price for the starter package"},
+      "next": {"he": "לבחור מחיר לפני שהדף עולה לאוויר", "en": "Pick a price before the page goes live"},
       "quick": false,
       "project": "main",
       "status": "waiting"

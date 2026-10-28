@@ -386,26 +386,38 @@ def is_waiting(it):
             and it.get("status", "waiting") == "waiting" and str(it.get("later_until") or "") <= today())
 
 
+def two(clean, v, limit, fallback=None):
+    """A question's text is one string, or {"he": ..., "en": ...} so the page can show it in its own language."""
+    if isinstance(v, dict):
+        he, en = clean(v.get("he"), None, limit), clean(v.get("en"), None, limit)
+        return {"he": he or en, "en": en or he} if he or en else fallback
+    return clean(v, fallback, limit)
+
+
+def plain(v):
+    return (v.get("en") or v.get("he")) if isinstance(v, dict) else (v or "")
+
+
 def waiting(clean):
     rows, projs = [], projects()
     for it in read_tasks()[1]["items"]:
         if not is_waiting(it):
             continue
         p = it.get("project") if it.get("project") in projs else config()["defaultProject"]
-        name = clean(it.get("name"), "שאלה", 70)
-        nxt = clean(it.get("next"), None, 160)
+        name = two(clean, it.get("name"), 70, {"he": "שאלה", "en": "Question"})
+        nxt = two(clean, it.get("next"), 160)
         quick = bool(it.get("quick"))
         auto = not it.get("why")  # the page writes the general "why" lines in its own language
-        why = ([nxt] if nxt else []) if auto else [w for w in it["why"] if isinstance(w, str)]
+        why = ([nxt] if nxt else []) if auto else [w for w in it["why"] if isinstance(w, (str, dict))]
         q = "I want to move forward on %s (%s) from tasks.json in the office folder. Tell me briefly where it stands." % (
-            it["id"], it.get("name") or "")
+            it["id"], plain(name))
         chat = it.get("chat") if isinstance(it.get("chat"), str) and re.fullmatch(r"local_[0-9a-f-]{36}", it["chat"]) else None
         rows.append({"id": it["id"], "name": name, "next": nxt, "project": projs[p]["name"],
                      "main": bool(it.get("main")), "money": bool(it.get("money")),
-                     "quick": quick, "ask": clean(it.get("ask"), None, 120),
-                     "why": [clean(w, "", 160) for w in why[:2]], "whyAuto": auto,
+                     "quick": quick, "ask": two(clean, it.get("ask"), 120),
+                     "why": [two(clean, w, 160, "") for w in why[:2]], "whyAuto": auto,
                      "pick": it.get("pick") if quick and it.get("pick") in ("yes", "no") else None,
-                     "pickWhy": clean(it.get("pickWhy"), None, 160),
+                     "pickWhy": two(clean, it.get("pickWhy"), 160),
                      "chat": CHAT_LINK % chat if chat else None,
                      "newChat": NEW_CHAT % (quote(q, safe=""), quote(projs[p]["folder"], safe=""))})
     rows.sort(key=lambda r: not r["quick"])  # quick taps first; otherwise the file's order
