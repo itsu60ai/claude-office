@@ -43,6 +43,8 @@ UPLOADS = os.path.join(STATE, "uploads")           # pictures added to a request
 SNAPSHOTS = os.path.join(STATE, "snapshots")       # a copy before every write, never deleted
 NEXT_DIR = os.path.join(HERE, "next")              # where "the next version" is built; the live page is untouched
 SERVED = {"/": "index.html", "/index.html": "index.html"}  # the only files the browser can get
+SERVED.update({"/fonts/%s-%s.woff2" % (f, s): "fonts/%s-%s.woff2" % (f, s)  # skin fonts, kept here so nothing loads from outside
+               for f in ("heebo", "rubik", "secular-one", "frank-ruhl-libre") for s in ("hebrew", "latin")})
 
 TOOL_KIND = {
     "Read": ("read", "read-files"), "Grep": ("read", "search-files"), "Glob": ("read", "find-files"),
@@ -932,6 +934,7 @@ def live():
 
 
 class Handler(SimpleHTTPRequestHandler):
+    extensions_map = {**SimpleHTTPRequestHandler.extensions_map, ".woff2": "font/woff2"}  # older Pythons don't know it
     def __init__(self, *a, **k):
         super().__init__(*a, directory=HERE, **k)
 

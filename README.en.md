@@ -73,7 +73,7 @@ Missing something? Write it down. Press Build, and Claude builds a new version o
 
 <div align="center">
 
-📷 Up to 4 pictures per request &nbsp;·&nbsp; 🌐 Hebrew and English &nbsp;·&nbsp; 🔄 Refreshes itself every 10 seconds
+📷 Up to 4 pictures per request &nbsp;·&nbsp; 🌐 Hebrew and English &nbsp;·&nbsp; 🎨 6 skins, dark mode included &nbsp;·&nbsp; 🔄 Refreshes itself every 10 seconds
 
 </div>
 
@@ -174,6 +174,7 @@ There's a sample in `tasks.example.json`. A question can be written in Hebrew, E
 | `CLAUDE.md` | Instructions for Claude: setup, questions, feedback |
 | `VERSION` | The version number, added to every feedback message |
 | `assets/` | The pictures on this page, with made-up data |
+| `fonts/` | The skins' fonts, kept here so the page loads nothing from outside. OFL license, see `OFL-*.txt` |
 | `state/` | Created on its own: request history, pictures and backups. Never committed |
 
 </details>
