@@ -273,6 +273,8 @@ html{font-size:100%}
 .langBtn{background:var(--bar-btn);color:var(--bar-ink);border:2px solid var(--bar-btn-line);border-radius:8px;padding:8px 14px;
   font-weight:600;cursor:pointer;min-height:44px}
 .langBtn:hover{filter:brightness(1.1)}
+.langBtn.bell{padding:8px 10px;line-height:1}
+.langBtn.bell[aria-pressed=false]{opacity:.55}
 select.langBtn{appearance:none;-webkit-appearance:none;padding-inline-end:30px;background-image:linear-gradient(45deg,transparent 50%,currentColor 50%),linear-gradient(135deg,currentColor 50%,transparent 50%);background-size:5px 5px;background-repeat:no-repeat;background-position:calc(100% - 16px) 55%,calc(100% - 11px) 55%}
 html[dir=rtl] select.langBtn{background-position:16px 55%,21px 55%}
 select.langBtn option{background:var(--panel);color:var(--ink)}
@@ -481,6 +483,7 @@ html[dir=ltr] [data-bidi], html[dir=ltr] [data-bidi-in]{text-align:left}
   </div>
   <div class="barEnd">
     <button class="langBtn" id="fbBtn" type="button" data-t="fbBtn"></button>
+    <button class="langBtn bell" id="bellBtn" type="button" aria-pressed="false">🔔</button>
     <button class="langBtn" id="langBtn" type="button"></button>
     <select class="langBtn" id="themeSel" data-ta="themeAria">
       <option value="wood" data-t="thWood"></option><option value="night" data-t="thNight"></option><option value="pop" data-t="thPop"></option><option value="paper" data-t="thPaper"></option><option value="terminal" data-t="thTerminal"></option><option value="glass" data-t="thGlass"></option>
@@ -770,7 +773,9 @@ he: {
   agoNow:'עכשיו', agoM: m => `לפני ${m} דק'`, agoH: h => `לפני ${h} שע'`, agoD: d => d === 1 ? 'לפני יום' : `לפני ${d} ימים`,
 
   /* texts the server sends as keys */
-  's.working':'עובדת', 's.stuck': n => `עצרה לפני ${n} דק'. אולי מחכה לאישור שלך`, 's.done':'סיימה. התור שלך', 's.idle':'בהפסקה',
+  's.working':'עובדת', 's.stuck': n => `עצרה לפני ${n} דק'. אולי מחכה לאישור שלך`, 's.done':'סיימה. התור שלך', 's.waiting':'מחכה לאישור או לתשובה שלך',
+  bellOn:'התראות פועלות. לחיצה מכבה', bellOff:'להפעיל התראה כשקלוד מסיים או מחכה לך',
+  bellBlocked:'הדפדפן חוסם התראות לדף הזה. הכותרת של הלשונית תהבהב במקום', alertMany: n => `${n} דברים מחכים לך במשרד`, 's.idle':'בהפסקה',
   's.untitled':'שיחה בלי שם',
   's.tool.read-files':'קוראת קבצים', 's.tool.search-files':'מחפשת בקבצים', 's.tool.find-files':'מחפשת קבצים',
   's.tool.edit-file':'כותבת בקובץ', 's.tool.write-file':'כותבת קובץ', 's.tool.run':'מריצה פקודה',
@@ -893,7 +898,9 @@ en: {
 
   agoNow:'just now', agoM: m => `${m} min ago`, agoH: h => `${h} h ago`, agoD: d => d === 1 ? '1 day ago' : `${d} days ago`,
 
-  's.working':'Working', 's.stuck': n => `Stopped ${n} min ago. It may be waiting for your OK`, 's.done':'Finished. Your turn', 's.idle':'On a break',
+  's.working':'Working', 's.stuck': n => `Stopped ${n} min ago. It may be waiting for your OK`, 's.done':'Finished. Your turn', 's.waiting':'Waiting for your OK or answer',
+  bellOn:'Alerts are on. Click to turn off', bellOff:'Alert me when Claude finishes or waits for me',
+  bellBlocked:'The browser blocks alerts for this page. The tab title will blink instead', alertMany: n => `${n} things are waiting for you in the office`, 's.idle':'On a break',
   's.untitled':'Untitled chat',
   's.tool.read-files':'Reading files', 's.tool.search-files':'Searching files', 's.tool.find-files':'Looking for files',
   's.tool.edit-file':'Editing a file', 's.tool.write-file':'Writing a file', 's.tool.run':'Running a command',
@@ -1149,8 +1156,67 @@ async function refresh(){
     if (selected && !data.desks.some(d => d.id === selected)) selected = null;
     $('brand').textContent = document.title = officeName();
     drawScene(); drawBubble(); drawNow(); drawFeed(); drawAsk(); drawNext();
+    checkAlerts();
   } catch (e) { failing = true; announce(t('liveLost')); }
   drawPulse();
+}
+
+/* alerts: a request or a chat that turns "answer ready" / "your turn" / "waiting on you".
+   The tab title blinks until the page is looked at; a browser notice too when the bell is on. */
+const ALERT_STATES = ['result', 'needs-you', 'done', 'stuck'];
+let seen = null, blinkT = null, blinkMsg = '';
+function alertsOn(){ try { return localStorage.getItem('officeAlerts') === '1'; } catch (e) { return false; } }
+function canNotify(){ return 'Notification' in window && Notification.permission === 'granted'; }
+function drawBell(){
+  const b = $('bellBtn'), on = alertsOn() && canNotify();
+  const tip = t(on ? 'bellOn' : ('Notification' in window && Notification.permission === 'denied' ? 'bellBlocked' : 'bellOff'));
+  b.setAttribute('aria-pressed', on ? 'true' : 'false'); b.title = tip; b.setAttribute('aria-label', tip);
+}
+$('bellBtn').addEventListener('click', async () => {
+  let on = false;
+  if (!alertsOn() && 'Notification' in window) {
+    const p = Notification.permission === 'default' ? await Notification.requestPermission() : Notification.permission;
+    on = p === 'granted';
+  }
+  try { localStorage.setItem('officeAlerts', on ? '1' : '0'); } catch (e) {}
+  drawBell();
+});
+function stopBlink(){ if (blinkT) { clearInterval(blinkT); blinkT = null; document.title = officeName(); } }
+function startBlink(msg){
+  blinkMsg = msg; if (blinkT) return;
+  let on = false;
+  blinkT = setInterval(() => { on = !on; document.title = on ? '● ' + blinkMsg : officeName(); }, 1000);
+}
+addEventListener('focus', stopBlink);
+document.addEventListener('visibilitychange', () => { if (!document.hidden && document.hasFocus()) stopBlink(); });
+function checkAlerts(){
+  const now = {}, hits = [], reqChats = new Set();
+  (data.requests || []).forEach(r => { now['r' + r.id] = r.state; });
+  (data.desks || []).forEach(d => { now['d' + d.id] = d.state; });
+  if (seen) {
+    for (const r of data.requests || []) {
+      const was = seen['r' + r.id];
+      if (was && was !== r.state && ALERT_STATES.includes(r.state) && !ALERT_STATES.includes(was)) {
+        hits.push(t('req.' + r.state) + ': ' + L(r, 'text')); if (r.local) reqChats.add(r.local);
+      }
+    }
+    for (const d of data.desks || []) {
+      const was = seen['d' + d.id];
+      if (was && was !== d.state && ALERT_STATES.includes(d.state) && !ALERT_STATES.includes(was) && !reqChats.has(d.local))
+        hits.push(L(d, 'title') + ': ' + t('st.' + d.state));
+    }
+  }
+  seen = now;
+  if (!hits.length) return;
+  const msg = hits.length === 1 ? hits[0] : t('alertMany', hits.length);
+  announce(msg);
+  if (document.hidden || !document.hasFocus()) startBlink(msg);
+  if (alertsOn() && canNotify()) {
+    try {
+      const n = new Notification(officeName(), {body: hits.slice(0, 3).join('\n'), tag: 'office', renotify: true});
+      n.onclick = () => { focus(); n.close(); };
+    } catch (e) {}
+  }
 }
 
 /* language: one switch, everything redraws in place */
@@ -1177,6 +1243,7 @@ function applyLang(){
   $('askMore').textContent = t($('askRoute').hidden ? 'askMore' : 'askLess');
   const lb = $('langBtn'); lb.textContent = t('langBtn'); lb.lang = lang === 'he' ? 'en' : 'he'; lb.setAttribute('aria-label', t('langAria'));
   $('brand').textContent = document.title = officeName();
+  drawBell();
   optsKey = '';
   drawAll();
   drawPics();
@@ -1624,7 +1691,8 @@ $('buildCancel').addEventListener('click', async () => {
 let narrow = innerWidth < 560;
 addEventListener('resize', () => { const n = innerWidth < 560; if (n !== narrow) { narrow = n; drawScene(); } drawBubble(); });
 setInterval(drawPulse, 1000);
-setInterval(() => { if (!document.hidden) refresh(); }, 10000);
+let tick = 0;
+setInterval(() => { tick++; if (!document.hidden || tick % 3 === 0) refresh(); }, 10000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
 applyLang();
 fixBidi();

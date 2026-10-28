@@ -24,6 +24,7 @@ from urllib.parse import quote, unquote
 HERE = os.path.dirname(os.path.abspath(__file__))
 HOME = os.path.expanduser("~")
 TRANSCRIPTS = os.path.join(HOME, ".claude", "projects")
+SESSIONS = os.path.join(HOME, ".claude", "sessions")  # one status file per running chat (busy / idle / waiting)
 # Where the Claude desktop app keeps its chat list. Windows (Store and regular install), Mac, Linux.
 APP_DIRS = [
     *glob.glob(os.path.expandvars(r"%LOCALAPPDATA%\Packages\Claude_*\LocalCache\Roaming\Claude\claude-code-sessions")),
@@ -79,13 +80,26 @@ FILE_NAME = re.compile(r"(IMG-[0-9a-f]{16}\.(png|jpg|gif|webp)|FILE-[0-9a-f]{16}
 IMG_KINDS = {"png": b"\x89PNG", "jpg": b"\xff\xd8\xff", "gif": b"GIF8", "webp": b"RIFF"}
 DEDUP_S = 600          # the same text to the same place within 10 minutes is one request
 SEND_WAIT_S = 1800     # after this, a request nobody sent is shown as "not sent"
+MATCHES = os.path.join(STATE, "office-matches.json")  # request tag -> chat, kept across restarts
 ITEM_ID = r"[A-Z]{2,8}-\d{1,5}"
 
 _app_cache = {}        # path -> (mtime, parsed subset)
 _tx_path = {}          # cli session -> transcript path
 _qlock = threading.Lock()  # one writer for the queue log and tasks.json
 _match = {}            # tag -> {"local", "cli"} once a chat with that tag is found
-_no_tag = set()        # (tag, cli) whose fixed opening part was read and has no tag
+_no_tag = set()        # (tag, cli) whose first message from the user was read and has no tag
+_mlock = threading.Lock()  # one writer for the matches file
+_live = None           # (time, cli -> status) read from SESSIONS, reused for 2 seconds
+
+if os.name == "nt":
+    import ctypes
+    from ctypes import wintypes
+    _k32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    _k32.OpenProcess.restype = wintypes.HANDLE
+    _k32.OpenProcess.argtypes = [wintypes.DWORD, wintypes.BOOL, wintypes.DWORD]
+    _k32.GetExitCodeProcess.argtypes = [wintypes.HANDLE, ctypes.POINTER(wintypes.DWORD)]
+    _k32.GetProcessTimes.argtypes = [wintypes.HANDLE] + [ctypes.POINTER(wintypes.FILETIME)] * 4
+    _k32.CloseHandle.argtypes = [wintypes.HANDLE]
 _cfg = {"mt": None, "data": None}
 
 
@@ -287,6 +301,56 @@ def recent_actions(lines, n=3):
     return acts[:n]
 
 
+def proc_alive(pid, start):
+    """True when this pid still runs and is the process that wrote the file (a pid can be reused)."""
+    if os.name != "nt":
+        try:
+            os.kill(pid, 0)
+            return True
+        except PermissionError:
+            return True
+        except OSError:
+            return False
+    h = _k32.OpenProcess(0x1000, False, pid)  # query limited information
+    if not h:
+        return False
+    try:
+        code = wintypes.DWORD()
+        if not _k32.GetExitCodeProcess(h, ctypes.byref(code)) or code.value != 259:  # 259: still running
+            return False
+        ft = [wintypes.FILETIME() for _ in range(4)]
+        if not _k32.GetProcessTimes(h, *[ctypes.byref(x) for x in ft]):
+            return True
+        return not start or str((ft[0].dwHighDateTime << 32) | ft[0].dwLowDateTime) == str(start)
+    finally:
+        _k32.CloseHandle(h)
+
+
+def live_status():
+    """cli session -> {"status", "at"} for chats whose process runs. The app's internal files: best effort only."""
+    global _live
+    if _live and now() - _live[0] < 2:
+        return _live[1]
+    out = {}
+    for path in glob.glob(os.path.join(SESSIONS, "*.json")):
+        try:
+            with open(path, encoding="utf-8") as f:
+                d = json.load(f)
+            sid, st, pid = d.get("sessionId"), d.get("status"), d.get("pid")
+            if not (isinstance(sid, str) and st in ("busy", "idle", "waiting") and isinstance(pid, int)):
+                continue
+            if not proc_alive(pid, d.get("procStart")):
+                continue
+        except (OSError, ValueError, AttributeError):
+            continue
+        at = d.get("statusUpdatedAt")
+        at = at / 1000.0 if isinstance(at, (int, float)) else 0
+        if sid not in out or at > out[sid]["at"]:
+            out[sid] = {"status": st, "at": at}
+    _live = (now(), out)
+    return out
+
+
 def turn_open(lines):
     """True while a chat's turn is still running: its last entry isn't a finished reply."""
     for line in reversed(lines):
@@ -335,10 +399,13 @@ def turn(cli, clean):
     lines = tail(tx, 160000) if tx else []
     acts = recent_actions(lines)
     quiet = now() - tx_mt if tx_mt else 1e9
-    is_open = turn_open(lines) if lines else False
+    ls = live_status().get(cli)  # when the app says it, it wins; the transcript is the fallback
+    is_open = ls["status"] != "idle" if ls else (turn_open(lines) if lines else False)
     kind, doing, dkey = action_text(acts[0][1], acts[0][2], clean) if acts else ("other", None, None)
     arg = None
-    if is_open and quiet < STUCK_S:
+    if ls and ls["status"] == "waiting":
+        state, line, key = "stuck", "מחכה לאישור או לתשובה שלך", "waiting"
+    elif is_open and (quiet < STUCK_S or (ls and ls["status"] == "busy")):
         state, line, key = "work", doing or "עובדת", dkey if doing else "tool.working"
     elif is_open:
         arg = int(quiet // 60)
@@ -590,6 +657,57 @@ def typed(buf, tag):
     return False
 
 
+def head_has(tx, tag):
+    """A new chat read from the top until the user's first own message: True / False, None while they have not sent one."""
+    with open(tx, "rb") as f:
+        for i, line in enumerate(f):
+            if i > 400:
+                return False
+            if b'"user"' not in line:
+                continue
+            try:
+                e = json.loads(line)
+            except ValueError:
+                continue
+            if e.get("type") != "user" or e.get("isMeta"):
+                continue
+            c = (e.get("message") or {}).get("content")
+            parts = [c] if isinstance(c, str) else \
+                [x.get("text", "") for x in c or [] if isinstance(x, dict) and x.get("type") == "text"]
+            parts = [p for p in parts if p.strip() and not p.lstrip().startswith(("<command-", "<local-command"))]
+            if parts:  # not a tool result or an app command line
+                return typed(line, tag)
+    return None
+
+
+def load_matches():
+    try:
+        with open(MATCHES, encoding="utf-8") as f:
+            d = json.load(f)
+    except (OSError, ValueError):
+        return {}
+    return {k: v for k, v in d.items() if isinstance(v, dict) and v.get("local") and v.get("cli")} \
+        if isinstance(d, dict) else {}
+
+
+def save_match(tag, m):
+    """Adds one tag -> chat pair: read the file, merge, write a temp file, swap it in."""
+    with _mlock:
+        _match[tag] = m
+        cur = load_matches()
+        cur[tag] = m
+        tmp = MATCHES + ".tmp"
+        try:
+            with open(tmp, "w", encoding="utf-8") as f:
+                json.dump(cur, f, ensure_ascii=False)
+            os.replace(tmp, MATCHES)
+        except OSError:
+            pass  # still kept in memory until the next restart
+
+
+_match.update(load_matches())
+
+
 def find_tag(tag, since, chat=None):
     """The chat whose transcript holds this ASCII tag: a known chat (tail only) or one opened after `since` (head only)."""
     if tag in _match:
@@ -604,20 +722,25 @@ def find_tag(tag, since, chat=None):
         if not chat and (tag, ch["cli"]) in _no_tag:
             continue
         try:
-            size = os.path.getsize(tx)
             if os.path.getmtime(tx) < since - 60:
                 continue
-            with open(tx, "rb") as f:
-                if chat:
+            if chat:
+                size = os.path.getsize(tx)
+                with open(tx, "rb") as f:
                     f.seek(max(0, size - 400000))
-                if not typed(f.read(400000), b):
-                    if not chat and size >= 400000:
-                        _no_tag.add((tag, ch["cli"]))  # the opening part is written, it will not change
+                    if not typed(f.read(400000), b):
+                        continue
+            else:
+                hit = head_has(tx, b)
+                if not hit:
+                    if hit is False:
+                        _no_tag.add((tag, ch["cli"]))  # his first message is written, it will not change
                     continue
         except OSError:
             continue
-        _match[tag] = {"local": ch["local"], "cli": ch["cli"]}
-        return _match[tag]
+        m = {"local": ch["local"], "cli": ch["cli"]}
+        save_match(tag, m)
+        return m
     return None
 
 
