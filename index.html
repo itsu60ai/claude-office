@@ -178,6 +178,7 @@ footer{max-width:1100px;margin:0 auto;padding:4px 16px 28px;font-size:13px;color
     <div class="stat"><small data-t="sAge"></small><b id="sAge">-</b></div>
   </div>
   <div class="barEnd">
+    <button class="langBtn" id="fbBtn" type="button" data-t="fbBtn"></button>
     <button class="langBtn" id="langBtn" type="button"></button>
     <button class="tourBtn" id="tourBtn" type="button" data-t="tourBtn"></button>
   </div>
@@ -313,7 +314,7 @@ const PASTE = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent |
 /* every word on the page, in both languages. One name per thing: chat, desk, request, idea, task list, the next version. */
 const STR = {
 he: {
-  brand:'המשרד', langBtn:'English', langAria:'החלפת השפה לאנגלית', tourBtn:'▶ סיור של דקה',
+  brand:'המשרד', langBtn:'English', langAria:'החלפת השפה לאנגלית', tourBtn:'▶ סיור של דקה', fbBtn:'💬 פידבק',
   sWork:'שיחות בעבודה', sWait:'מחכים לך', sAge:'עודכן', agoS: s => `לפני ${s} שנ'`,
   pulseConnecting:'מתחבר...', pulseOk:'מעודכן. הדף מתרענן לבד כל 10 שניות.',
   pulsePrivacy:'<span class="err">התצוגה מושהית.</span> הופיע בנתונים מידע פרטי, אז לא מוצג כלום.',
@@ -390,7 +391,7 @@ he: {
   toggleFail:'לא הצלחתי לשנות. אפשר לנסות שוב.', cancelled:'בוטל. הדף החי לא השתנה.',
   cancelRunning:'היא נבנית ממש עכשיו. צריך לעצור אותה קודם בשיחה שלה.', cancelFail:'לא הצלחתי לבטל.',
 
-  footer:'הדף קורא את הקבצים במחשב שלך כל 10 שניות, בלי מודל ובלי מכסה. הכפתורים רק שומרים טקסט ופותחים שיחה בקלוד. שום דבר לא רץ עד שלוחצים שם שלח. מהדף הזה שום דבר לא נשלח, לא משולם ולא מתפרסם. רוצה לספר מה עבד ומה לא? פותחים צ\'אט עם קלוד בתיקייה של המשרד וכותבים "פידבק".',
+  footer:'הדף קורא את הקבצים במחשב שלך כל 10 שניות, בלי מודל ובלי מכסה. הכפתורים רק שומרים טקסט ופותחים שיחה בקלוד. שום דבר לא רץ עד שלוחצים שם שלח. מהדף הזה שום דבר לא נשלח, לא משולם ולא מתפרסם. רוצה לספר מה עבד ומה לא? לוחצים למעלה על "פידבק". קלוד שואל 6 שאלות קצרות ומכין הודעה שאתה שולח בעצמך.',
 
   tStep: (i, n) => `שלב ${i} מתוך ${n}`, whyHere:'למה זה כאן:', back:'הקודם', next:'הבא', gotIt:'הבנתי', skipTour:'לדלג על הסיור',
   't1.title':'המצב בשתי שניות',
@@ -432,7 +433,7 @@ he: {
   's.tasks':'רשימת המשימות', 's.updated': n => `עודכן: ${n}`,
 },
 en: {
-  brand:'The office', langBtn:'עברית', langAria:'Switch the page to Hebrew', tourBtn:'▶ 1-minute tour',
+  brand:'The office', langBtn:'עברית', langAria:'Switch the page to Hebrew', tourBtn:'▶ 1-minute tour', fbBtn:'💬 Feedback',
   sWork:'Chats working', sWait:'Waiting on you', sAge:'Updated', agoS: s => `${s}s ago`,
   pulseConnecting:'Connecting...', pulseOk:'Up to date. Refreshes itself every 10 seconds.',
   pulsePrivacy:'<span class="err">View paused.</span> Something private showed up in the data, so nothing is shown.',
@@ -509,7 +510,7 @@ en: {
   toggleFail:'Couldn\'t change it. Try again.', cancelled:'Cancelled. The live page never changed.',
   cancelRunning:'It\'s building right now. Stop it in its own chat first.', cancelFail:'Couldn\'t cancel it.',
 
-  footer:'This page reads the files on your computer every 10 seconds, with no model and no quota. The buttons only save text and open a chat in Claude. Nothing runs until you press Send there. Nothing is sent, paid for or published from this page. Want to tell us what worked and what didn\'t? Open a Claude chat in the office folder and write "feedback".',
+  footer:'This page reads the files on your computer every 10 seconds, with no model and no quota. The buttons only save text and open a chat in Claude. Nothing runs until you press Send there. Nothing is sent, paid for or published from this page. Want to tell us what worked and what didn\'t? Press "Feedback" at the top. Claude asks 6 short questions and writes a message you send yourself.',
 
   tStep: (i, n) => `Step ${i} of ${n}`, whyHere:'Why it\'s here:', back:'Back', next:'Next', gotIt:'Got it', skipTour:'Skip the tour',
   't1.title':'Where things stand, in 2 seconds',
@@ -793,6 +794,7 @@ function applyLang(){
   drawPics();
   if (tIdx >= 0) tourShow(tIdx);
 }
+$('fbBtn').addEventListener('click', () => { const l = data?.feedback?.[lang]; if (l) location.href = l; });
 $('langBtn').addEventListener('click', () => {
   lang = lang === 'he' ? 'en' : 'he'; langChosen = true;
   try { localStorage.setItem('officeLang', lang); } catch (e) {}

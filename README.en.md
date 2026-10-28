@@ -108,13 +108,17 @@ Claude asks what your projects are and which folder each one lives in, and does 
 
 ## 💬 Feedback
 
-The office is new, and it gets better from what you tell us. After a few days of use, write to Claude in the office folder:
+The office is new, and it gets better from what you tell us. After a few days of use, it takes two minutes:
 
-```
-feedback
-```
+**1️⃣ Press "💬 Feedback"** in the bar at the top of the office.
 
-Claude asks 6 short questions, strips names and personal details, and gives you a ready message that starts with `#פידבק-משרד`. You copy it and send it to whoever shared the office with you. Claude never sends anything itself.
+**2️⃣ A Claude chat opens** with the word "feedback" already typed. Press Send.
+
+**3️⃣ Answer 6 short questions.** What worked, what got stuck, what's missing.
+
+**4️⃣ Get a ready message** that starts with `#פידבק-משרד`, with names and personal details removed. Copy it and send it to whoever shared the office with you.
+
+Claude never sends anything itself. No button? Open a Claude chat in the office folder and write `feedback`.
 
 [![Feedback form](https://img.shields.io/badge/Have%20GitHub%3F-Feedback%20form-238636?style=for-the-badge&logo=github)](https://github.com/itsu60ai/claude-office/issues/new?template=feedback.yml)
 

@@ -919,7 +919,8 @@ def live():
                 "requests": [], "ideas": [], "build": None, "projects": []}
     c = config()
     data.update(officeName=c["officeName"], defaultLang=c["defaultLang"], defaultProject=c["defaultProject"],
-                hints=hints())
+                hints=hints(),
+                feedback={k: NEW_CHAT % (quote(w, safe=""), quote(HERE, safe="")) for k, w in (("he", "פידבק"), ("en", "feedback"))})
     return data
 
 
@@ -927,7 +928,15 @@ class Handler(SimpleHTTPRequestHandler):
     def __init__(self, *a, **k):
         super().__init__(*a, directory=HERE, **k)
 
+    def okhost(self):
+        port = self.server.server_address[1]
+        return {"127.0.0.1:%d" % port, "localhost:%d" % port}
+
     def do_GET(self):
+        # a rebound hostname (DNS rebinding) still reaches 127.0.0.1, but its Host header gives it away
+        if self.headers.get("Host") not in self.okhost():
+            self.send_error(403)
+            return
         p = unquote(self.path.split("?")[0])
         if p == "/api/live":
             try:
@@ -953,8 +962,7 @@ class Handler(SimpleHTTPRequestHandler):
 
     def do_POST(self):
         # same-origin JSON only: a page on another site can't send this header without a preflight we never answer
-        port = self.server.server_address[1]
-        okhost = {"127.0.0.1:%d" % port, "localhost:%d" % port}
+        okhost = self.okhost()
         origin = self.headers.get("Origin", "")
         fn = POSTS.get(self.path)
         if (not fn or self.headers.get("Host") not in okhost
