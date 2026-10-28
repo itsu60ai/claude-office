@@ -1192,7 +1192,8 @@ document.addEventListener('visibilitychange', () => { if (!document.hidden && do
 function checkAlerts(){
   const now = {}, hits = [], reqChats = new Set();
   (data.requests || []).forEach(r => { now['r' + r.id] = r.state; });
-  (data.desks || []).forEach(d => { now['d' + d.id] = d.state; });
+  // a hidden page polls rarely and can miss a short "work" between two "done"s, so a newer finish time counts too
+  (data.desks || []).forEach(d => { now['d' + d.id] = d.state + '|' + (d.since || ''); });
   if (seen) {
     for (const r of data.requests || []) {
       const was = seen['r' + r.id];
@@ -1202,7 +1203,11 @@ function checkAlerts(){
     }
     for (const d of data.desks || []) {
       const was = seen['d' + d.id];
-      if (was && was !== d.state && ALERT_STATES.includes(d.state) && !ALERT_STATES.includes(was) && !reqChats.has(d.local))
+      if (!was) continue;
+      const [ws, wt] = was.split('|');
+      const fresh = ws !== d.state ? !ALERT_STATES.includes(ws)
+        : d.state === 'done' && wt && d.since && Date.parse(d.since) - Date.parse(wt) > 60000;
+      if (fresh && ALERT_STATES.includes(d.state) && !reqChats.has(d.local))
         hits.push(L(d, 'title') + ': ' + t('st.' + d.state));
     }
   }
