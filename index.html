@@ -1,0 +1,1091 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Office</title>
+<style>
+/* cream page, warm white panels, wood bar, green buttons with a flat game edge */
+:root{
+  --bg:#f6f1e4; --panel:#fffaf0; --soft:#efe5cf; --ink:#2b2a26; --ink-soft:#4a4639; --muted:#645d4f;
+  --line:#ddd2b8; --line-strong:#9a8e72;
+  --accent:#367a33; --accent-hover:#2b6a29; --accent-ink:#fff; --accent-edge:#1f4f1d;
+  --warn:#955300; --amber-bg:#fdebc8; --warn-line:#eab56a;
+  --bar-bg:#5b4631; --bar-ink:#fffaf0; --bar-muted:#e3d6bd; --bar-btn:#70593f; --bar-btn-line:#8d7656;
+  --tour:#f5b800; --tour-ink:#3a2a00; --tour-edge:#b98a00;
+  --shadow-card:0 2px 0 rgba(90,70,40,.12); --shadow-modal:0 8px 24px rgba(60,46,28,.25);
+  --font:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.45}
+button,a{font:inherit}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* top bar */
+.bar{background:var(--bar-bg);color:var(--bar-ink)}
+.bar-in{max-width:1100px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:10px 22px;flex-wrap:wrap}
+.brand{font-weight:700;font-size:18px;margin-inline-end:6px}
+.stats{display:flex;gap:18px;flex-wrap:wrap}
+.stat small{display:block;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--bar-muted)}
+.stat b{font-size:18px}
+.barEnd{margin-inline-start:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.langBtn{background:var(--bar-btn);color:var(--bar-ink);border:2px solid var(--bar-btn-line);border-radius:8px;padding:8px 14px;
+  font-weight:600;cursor:pointer;min-height:44px}
+.langBtn:hover{filter:brightness(1.1)}
+.tourBtn{background:var(--tour);color:var(--tour-ink);border:2px solid var(--tour-edge);border-radius:8px;
+  padding:8px 16px;font-weight:700;cursor:pointer;min-height:44px;box-shadow:0 3px 0 var(--tour-edge)}
+.tourBtn:hover{filter:brightness(1.05)} .tourBtn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--tour-edge)}
+.tourBtn.fresh{animation:nudge 2.4s ease-in-out 3}
+@keyframes nudge{0%,100%{transform:none}50%{transform:translateY(-3px)}}
+.strip{background:var(--soft);border-bottom:1px solid var(--line);font-size:14px;color:var(--ink-soft)}
+.strip div{max-width:1100px;margin:0 auto;padding:6px 16px}
+.strip .err{color:#b3342d;font-weight:600}
+
+/* layout: ask on top, the office beside "waiting on you" and the feed; on a phone "waiting on you" comes first */
+main{max-width:1100px;margin:0 auto;padding:14px 16px;display:grid;gap:14px;
+  grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);grid-template-areas:"ask ask" "office needs" "office feed" "office next";align-items:start}
+#askPanel{grid-area:ask} #officePanel{grid-area:office} #nowCard{grid-area:needs} #feedPanel{grid-area:feed} #nextPanel{grid-area:next}
+@media (max-width:759px){ main{grid-template-columns:minmax(0,1fr);grid-template-areas:"ask" "needs" "office" "feed" "next"} }
+.panel{background:var(--panel);border:2px solid var(--line);border-radius:10px;padding:14px 16px;box-shadow:var(--shadow-card)}
+.panel h2{font-size:18px;margin:0 0 4px}
+.hint{font-size:14px;color:var(--muted);margin:0 0 10px}
+
+/* the office scene and the speech bubble over a desk; the drawing itself stays left-to-right in both languages */
+.sceneBox{position:relative}
+.scene{border:2px solid var(--line-strong);border-radius:8px;overflow:hidden;background:#f6ecd8}
+.scene svg{display:block;width:100%;height:auto;direction:ltr}
+.desk{cursor:pointer;outline:none}
+.desk:hover .lbl,.desk:focus-visible .lbl{stroke:var(--accent);stroke-width:1.2}
+.desk.sel .lbl{stroke:var(--accent);stroke-width:1.4}
+.hl{animation:ty .36s steps(1) infinite}.hr{animation:ty .36s steps(1) infinite .18s}
+@keyframes ty{50%{transform:translateY(-1.5px)}}
+.ln{animation:ln 1.6s steps(5) infinite;transform-box:fill-box;transform-origin:left}
+@keyframes ln{0%{transform:scaleX(.2)}100%{transform:scaleX(1)}}
+.zz{animation:zz 2.4s steps(3) infinite}
+@keyframes zz{0%{opacity:.2}50%{opacity:1}100%{opacity:.2}}
+.bubble{position:absolute;z-index:5;width:min(280px,calc(100% - 12px));background:#fff;border:2px solid var(--ink);border-radius:8px;
+  padding:10px 12px;box-shadow:4px 4px 0 rgba(43,42,38,.85)}
+.bubble b{display:block;font-size:15px}
+.bubble .meta{font-size:13px;color:var(--muted);margin:2px 0 4px}
+.bubble .what{font-size:14px;margin:0 0 10px}
+.bubble .row{gap:8px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--ink-soft);margin-top:10px}
+.legend>span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:50%;display:inline-block}
+
+/* buttons: every button says what happens */
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:9px 16px;border-radius:8px;cursor:pointer;
+  text-decoration:none;font-weight:700;border:2px solid var(--accent-edge);background:var(--accent);color:var(--accent-ink);box-shadow:0 3px 0 var(--accent-edge)}
+.btn:hover{background:var(--accent-hover)} .btn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--accent-edge)}
+.btn2{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:9px 14px;border-radius:8px;cursor:pointer;
+  text-decoration:none;font-weight:600;border:2px solid var(--line-strong);background:var(--panel);color:var(--ink);box-shadow:0 3px 0 var(--line-strong)}
+.btn2:hover{background:#fff} .btn2:active{transform:translateY(2px);box-shadow:0 1px 0 var(--line-strong)}
+.btn.sm,.btn2.sm{min-height:38px;padding:6px 12px;font-size:14px}
+.textBtn{background:none;border:0;color:var(--accent);cursor:pointer;padding:8px 0;min-height:40px;text-decoration:underline;font-size:14px}
+:focus-visible{outline:3px solid var(--tour);outline-offset:2px}
+
+/* waiting on you */
+.needs{border-color:var(--warn-line);background:var(--amber-bg)}
+.needs .kicker{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--warn);margin:0 0 4px}
+.big{font-size:19px;font-weight:700;margin:0 0 4px}
+.sub{color:var(--ink-soft);font-size:15px;margin:0 0 12px}
+.lab{font-size:13px;font-weight:700;color:var(--ink-soft);margin:6px 0 0}
+.note{font-size:13px;color:var(--muted);margin:10px 0 0}
+ol.queue{margin:4px 0 0;padding:0;padding-inline-start:20px;font-size:15px}
+ol.queue li{margin:4px 0}
+[hidden]{display:none!important}
+.whyBox{background:#fffaf0;border:1px solid var(--warn-line);border-radius:8px;padding:8px 12px;margin:8px 0 10px}
+.whyBox .lab{margin:0 0 2px} .whyBox .sub{margin:0;font-size:15px}
+.pick{font-size:15px;margin:0 0 12px;padding:8px 12px;border-radius:8px;background:#e4efd6;border:1px solid #a9c98f}
+.pick b{color:var(--accent-edge)}
+.btn.no{background:#fff;color:var(--ink);border-color:var(--line-strong);box-shadow:0 3px 0 var(--line-strong)}
+.btn.no:hover{background:#fff8ec}
+.btn.yes,.btn.no{min-width:84px}
+.btn.rec{outline:3px solid var(--tour);outline-offset:2px}
+.btn[disabled],.btn2[disabled]{opacity:.55;cursor:wait}
+.later{margin-top:10px;background:#fffaf0;border:1px dashed var(--line-strong);border-radius:8px;padding:8px 10px}
+.later .lab{margin:0}
+.saved{margin:10px 0 0;font-size:15px;font-weight:600;color:var(--accent-edge)}
+.saved.err{color:#b3342d}
+.tag{display:inline-block;font-size:12px;color:var(--warn);border:1px solid var(--warn-line);background:#fff;border-radius:99px;padding:0 8px;margin-inline-start:6px}
+
+/* ask: one box in, a visible route, then the request's real state */
+.ask textarea{width:100%;min-height:84px;resize:vertical;border:2px solid var(--line-strong);border-radius:8px;padding:10px 12px;
+  font:inherit;background:#fff;color:var(--ink)}
+.pics{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;margin:8px 0 0}
+.pics .note{margin:0}
+.pic{position:relative;width:64px;height:64px;border:2px solid var(--line-strong);border-radius:8px;overflow:hidden;background:#fff}
+.pic img{width:100%;height:100%;object-fit:cover;display:block}
+.pic button{position:absolute;top:2px;inset-inline-end:2px;width:24px;height:24px;border-radius:50%;border:1px solid var(--line-strong);
+  background:#fff;color:var(--ink);font-size:14px;line-height:1;cursor:pointer;padding:0}
+.ask textarea.drop{border-color:var(--accent-edge);background:var(--soft)}
+.route{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;font-size:14px;margin:8px 0 10px}
+.route .lab{margin:0}
+.route select{font:inherit;font-size:14px;min-height:40px;max-width:100%;border:2px solid var(--line-strong);border-radius:8px;background:#fff;color:var(--ink);padding:4px 8px}
+.route select:disabled{opacity:.6}
+.route .note{margin:0}
+.reqs .lab{margin:14px 0 0}
+.req{padding:10px 0;border-top:1px solid var(--line)}
+.req .top{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.req .top .note{margin:0}
+.req .txt{margin:4px 0;font-size:15px}
+.req .rep{margin:4px 0 6px;font-size:14px;background:var(--soft);border-radius:6px;padding:6px 10px}
+.badge{font-size:12px;font-weight:700;border-radius:99px;padding:1px 9px;border:1px solid var(--line-strong);background:#fff;color:var(--ink-soft);white-space:nowrap}
+.badge.send,.badge.unsent{color:var(--warn);border-color:var(--warn-line)}
+.badge.working,.badge.building,.badge.included{color:#1d6b4f;border-color:#8fcfb5;background:#e6f6ef}
+.badge.needs-you{color:#fff;background:var(--warn);border-color:var(--warn)}
+.badge.result,.badge.ready{color:var(--accent-edge);border-color:#a9c98f;background:#e4efd6}
+.ideas{list-style:none;margin:0;padding:0}
+.ideas li{display:flex;gap:10px;align-items:center;padding:4px 0;border-top:1px solid var(--line);font-size:15px}
+.ideas li:first-child{border-top:0}
+.ideas label{display:flex;gap:10px;align-items:center;flex:1;cursor:pointer;min-height:40px}
+.ideas input{width:20px;height:20px;accent-color:var(--accent);flex:none}
+.buildBox{margin-top:12px;background:#fff;border:1px dashed var(--line-strong);border-radius:8px;padding:10px 12px}
+.buildBox .sub{margin:0 0 8px}
+
+/* feed */
+.feed div{display:flex;gap:10px;font-size:14px;padding:6px 0;border-top:1px solid var(--line)}
+.feed div:first-child{border-top:0}
+.feed time{color:var(--muted);white-space:nowrap;min-width:70px}
+footer{max-width:1100px;margin:0 auto;padding:4px 16px 28px;font-size:13px;color:var(--muted)}
+
+/* tour: the step's part of the page is lit, everything else dims */
+.spot{position:relative;z-index:1001;box-shadow:0 0 0 4px var(--tour),0 0 0 9999px rgba(43,33,22,.6)!important;border-radius:10px}
+#tourCatch{position:fixed;inset:0;z-index:1000}
+#tourCard{position:fixed;z-index:1002;left:50%;bottom:16px;transform:translateX(-50%);width:min(440px,calc(100% - 32px));
+  background:var(--panel);border:2px solid var(--ink);border-radius:10px;padding:14px 16px;box-shadow:6px 6px 0 rgba(43,42,38,.85)}
+#tourCard .step{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--warn);margin:0 0 2px}
+#tourCard h3{font-size:19px;margin:0 0 6px}
+#tourCard p{margin:0 0 8px;font-size:15px}
+#tourCard .why{background:var(--soft);border-radius:6px;padding:8px 10px;font-size:14px}
+#tourCard .row{margin-top:12px}
+#tourCard .skip{margin-inline-start:auto}
+[dir=rtl] .stat small,[dir=rtl] .needs .kicker,[dir=rtl] #tourCard .step{letter-spacing:0}
+@media (prefers-reduced-motion:reduce){.hl,.hr,.ln,.zz,.tourBtn.fresh{animation:none}}
+</style>
+</head>
+<body>
+<div class="bar"><div class="bar-in" id="statsBar">
+  <span class="brand" id="brand"></span>
+  <div class="stats">
+    <div class="stat"><small data-t="sWork"></small><b id="sWork">-</b></div>
+    <div class="stat"><small data-t="sWait"></small><b id="sWait">-</b></div>
+    <div class="stat"><small data-t="sAge"></small><b id="sAge">-</b></div>
+  </div>
+  <div class="barEnd">
+    <button class="langBtn" id="langBtn" type="button"></button>
+    <button class="tourBtn" id="tourBtn" type="button" data-t="tourBtn"></button>
+  </div>
+</div></div>
+<div class="strip"><div id="pulse"></div></div>
+<div class="sr" id="live" aria-live="polite"></div>
+
+<main>
+  <section class="panel ask" id="askPanel">
+    <h2 data-t="askTitle"></h2>
+    <p class="hint" data-t="askHint"></p>
+    <label class="sr" for="askText" data-t="askLabel"></label>
+    <textarea id="askText" dir="auto" maxlength="2000" data-tp="askPh"></textarea>
+    <div class="pics" id="askPics">
+      <button class="btn2 sm" id="askAddPic" type="button" data-t="addPic"></button>
+      <span class="note" id="picHint"></span>
+      <input type="file" id="askFile" accept="image/png,image/jpeg,image/gif,image/webp" multiple hidden>
+    </div>
+    <div class="route" id="askRoute">
+      <span class="lab" data-t="goesTo"></span>
+      <label class="sr" for="askProject" data-t="srProject"></label><select id="askProject"></select>
+      <label class="sr" for="askTarget" data-t="srTarget"></label><select id="askTarget"></select>
+      <span class="note" id="routeWhy" dir="auto"></span>
+    </div>
+    <div class="row">
+      <button class="btn" id="askSend" type="button" data-t="askSend"></button>
+      <button class="btn2" id="askIdea" type="button" data-t="askIdea"></button>
+    </div>
+    <p class="saved" id="askSaved" role="status" hidden></p>
+    <p class="note" id="askNote" data-t="askNote"></p>
+    <div class="reqs" id="reqList"></div>
+  </section>
+
+  <section class="panel" id="officePanel">
+    <h2 data-t="officeTitle"></h2>
+    <p class="hint" data-t="officeHint"></p>
+    <div class="sceneBox" id="sceneBox">
+      <div class="scene"><svg id="scene" shape-rendering="crispEdges" role="img" data-ta="sceneAria"></svg></div>
+      <div class="bubble" id="bubble" role="dialog" aria-labelledby="bTitle" hidden>
+        <b id="bTitle" dir="auto"></b>
+        <div class="meta" id="bMeta"></div>
+        <p class="what" id="bWhat" dir="auto"></p>
+        <div class="row" id="bActions"></div>
+      </div>
+    </div>
+    <div class="legend" data-ta="legendAria">
+      <span><i style="background:#639922"></i><span data-t="st.work"></span></span>
+      <span><i style="background:#EF9F27"></i><span data-t="st.stuck"></span></span>
+      <span><i style="background:#2f6f62"></i><span data-t="st.done"></span></span>
+      <span><i style="background:#B4B2A9"></i><span data-t="legendIdle"></span></span>
+    </div>
+  </section>
+
+  <section class="panel needs" id="nowCard">
+    <p class="kicker" id="nowHead"></p>
+    <p class="big" id="nowName" dir="auto"></p>
+    <div class="whyBox" id="nowWhy" hidden>
+      <p class="lab" data-t="whyLab"></p>
+      <p class="sub" id="nowWhy1" dir="auto"></p>
+      <p class="sub" id="nowWhy2" dir="auto"></p>
+    </div>
+    <p class="pick" id="nowPick" hidden></p>
+    <div class="row" id="nowActions" hidden>
+      <span class="row" id="quickBtns">
+        <button class="btn yes" id="aYes" type="button" data-t="yes"></button>
+        <button class="btn no" id="aNo" type="button" data-t="no"></button>
+      </span>
+      <a class="btn" id="nowGo" href="#"></a>
+      <button class="btn2" id="nowAnswer" type="button" data-t="nowAnswer"></button>
+      <button class="btn2" id="aLater" type="button" aria-expanded="false" data-t="later"></button>
+    </div>
+    <div class="row later" id="laterRow" hidden>
+      <span class="lab" data-t="hideUntil"></span>
+      <button class="btn2 sm" type="button" data-days="1" data-t="d1"></button>
+      <button class="btn2 sm" type="button" data-days="3" data-t="d3"></button>
+      <button class="btn2 sm" type="button" data-days="7" data-t="d7"></button>
+    </div>
+    <p class="saved" id="nowSaved" role="status" hidden></p>
+    <p class="note" id="nowNote"></p>
+    <button class="textBtn" id="nowSkip" type="button" data-t="skip"></button>
+    <button class="textBtn" id="queueBtn" type="button" aria-expanded="false" hidden></button>
+    <ol class="queue" id="queue" hidden></ol>
+  </section>
+
+  <section class="panel" id="feedPanel">
+    <h2 data-t="feedTitle"></h2>
+    <div class="feed" id="feed"></div>
+  </section>
+
+  <section class="panel" id="nextPanel">
+    <h2 data-t="nextTitle"></h2>
+    <p class="hint" data-t="nextHint"></p>
+    <ul class="ideas" id="ideaList"></ul>
+    <div class="buildBox" id="buildBox">
+      <p class="sub" id="buildLine" dir="auto"></p>
+      <div class="row">
+        <button class="btn" id="buildBtn" type="button"></button>
+        <button class="textBtn" id="buildCancel" type="button" data-t="buildCancel" hidden></button>
+      </div>
+      <p class="note" data-t="buildNote"></p>
+    </div>
+    <p class="saved" id="nextSaved" role="status" hidden></p>
+  </section>
+</main>
+
+<footer data-t="footer"></footer>
+
+<div id="tourCatch" hidden></div>
+<div id="tourCard" role="dialog" aria-modal="true" aria-labelledby="tTitle" hidden>
+  <p class="step" id="tStep"></p>
+  <h3 id="tTitle"></h3>
+  <p id="tBody"></p>
+  <p class="why"><b data-t="whyHere"></b> <span id="tWhy"></span></p>
+  <div class="row">
+    <button class="btn2 sm" id="tBack" type="button" data-t="back"></button>
+    <button class="btn sm" id="tNext" type="button"></button>
+    <button class="textBtn skip" id="tSkip" type="button" data-t="skipTour"></button>
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const PASTE = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent || '') ? '⌘V' : 'Ctrl+V';
+
+/* every word on the page, in both languages. One name per thing: chat, desk, request, idea, task list, the next version. */
+const STR = {
+he: {
+  brand:'המשרד', langBtn:'English', langAria:'החלפת השפה לאנגלית', tourBtn:'▶ סיור של דקה',
+  sWork:'שיחות בעבודה', sWait:'מחכים לך', sAge:'עודכן', agoS: s => `לפני ${s} שנ'`,
+  pulseConnecting:'מתחבר...', pulseOk:'מעודכן. הדף מתרענן לבד כל 10 שניות.',
+  pulsePrivacy:'<span class="err">התצוגה מושהית.</span> הופיע בנתונים מידע פרטי, אז לא מוצג כלום.',
+  pulseDown:'<span class="err">השרת של המשרד לא רץ.</span> מפעילים אותו שוב, והדף יתמלא לבד.',
+  pulseLost:'<span class="err">החיבור נפל, מנסה שוב.</span> מה שרואים כאן הוא מהקריאה האחרונה.',
+  liveLost:'החיבור לשרת של המשרד נפל', livePrivacy:'התצוגה מושהית בגלל פרטיות',
+
+  askTitle:'לבקש מקלוד',
+  askHint:'כותבים כמו שמדברים: משימה חדשה, המשך למשהו קיים או תשובה לשאלה. הדף מנחש לאן זה שייך, פותח שיחה בקלוד עם הטקסט מוכן, ונשאר רק ללחוץ שלח.',
+  askLabel:'מה צריך?', askPh:'למשל: תכתוב לי פוסט קצר לאינסטגרם על המבצע של השבוע',
+  addPic:'הוספת תמונה', picHint: k => `אפשר גם להדביק (${k}) או לגרור לתיבה`,
+  goesTo:'יישלח אל:', srProject:'פרויקט', srTarget:'שיחה',
+  askSend:'פתיחת שיחה בקלוד', askIdea:'שמירה כרעיון לגרסה הבאה', askNote:'שום דבר לא רץ עד שלוחצים שלח בתוך קלוד.',
+  routeGuess: m => `ניחוש לפי "${m}"`, routeNone:'אין רמז ברור, אז לתיקייה הכללית', routeMine:'בחירה שלך',
+  routeItem:'הולך לשיחה שאחראית על השאלה הזו', routeSame:'חוזר לאותה שיחה, עם כל מה שהיא כבר יודעת',
+  routeNewProj:'. קלוד בודק קודם אם יש כבר פרויקט כזה, ופותח חדש רק אחרי אישור שלך',
+  newProject:'פרויקט חדש', tNew:'שיחה חדשה', tFollow:'המשך: ', tAnswer:'תשובה: ', tFollowReq:'המשך: השיחה של הבקשה הזו',
+  reqTitle:'הבקשות שלך',
+  'req.send':'מחכה ללחיצה על שלח', 'req.unsent':'לא נשלחה', 'req.working':'בעבודה', 'req.needs-you':'מחכה לך', 'req.result':'יש תשובה',
+  sameChat:' · באותה שיחה', openChat:'פתיחת השיחה', openAgain:'לפתוח שוב', follow:'המשך',
+  carryCopied: k => `הועתק. בשיחה שנפתחה מדביקים (${k}) ולוחצים שלח.`,
+  carryManual:'השיחה נפתחה. מעתיקים את הטקסט מהתיבה, מדביקים שם ולוחצים שלח.',
+  carryNew:'נפתחה שיחה חדשה עם הטקסט מוכן. לוחצים שם שלח. עד אז שום דבר לא רץ.',
+  'err.bad-text':'צריך לכתוב משהו קודם (עד 2000 תווים).', 'err.bad-project':'צריך לבחור פרויקט.',
+  'err.no-item':'השאלה הזו כבר זזה. לא נשמר כלום.', 'err.bad-target':'צריך לבחור לאן זה הולך.',
+  errSave:'לא הצלחתי לשמור. לא השתנה כלום, אפשר לנסות שוב עוד רגע.', errReopen:'לא מצאתי את הבקשה הזו.',
+  ideaLen:'רעיון זה שורה אחת קצרה (עד 500 תווים).',
+  ideaPics:'תמונות הולכות עם בקשה, לא עם רעיון. אפשר ללחוץ "פתיחת שיחה בקלוד" או להסיר את התמונה.',
+  ideaFail:'לא הצלחתי לשמור את הרעיון. אפשר לנסות שוב עוד רגע.', ideaDup:'הרעיון הזה כבר ברשימה.',
+  ideaSaved:'נשמר ברשימת הרעיונות לגרסה הבאה. לא נבנה כלום.',
+  picLimit: n => `עד ${n} תמונות בבקשה אחת.`, picType:'זה לא קובץ תמונה (PNG, JPG, GIF או WebP).',
+  picBig:'התמונה גדולה מדי (עד 8MB).', picAdded:'התמונה נוספה. היא תצורף לבקשה כשתיפתח השיחה.',
+  picFail:'לא הצלחתי להוסיף את התמונה. אפשר לנסות שוב.', picAlt: n => `תמונה ${n}`, picRemove: n => `הסרת תמונה ${n}`,
+
+  officeTitle:'מי עובד על מה',
+  officeHint:'כל שולחן הוא שיחה עם קלוד מ-24 השעות האחרונות. לוחצים על שולחן כדי לראות מה היא עושה עכשיו.',
+  sceneAria:'המשרד: שולחן לכל שיחה מ-24 השעות האחרונות', legendAria:'מה הצבעים אומרים', legendIdle:'בהפסקה (zzz)',
+  'st.work':'עובדת עכשיו', 'st.stuck':'נעצרה, כדאי להציץ', 'st.done':'סיימה, התור שלך', 'st.idle':'בהפסקה', 'st.empty':'שולחן פנוי',
+  'kd.read':'קוראת קבצים', 'kd.write':'כותבת', 'kd.run':'מריצה פקודה', 'kd.web':'באינטרנט', 'kd.help':'עם עוזר',
+  boardTitle:'היום במשרד', boardWork: n => n === 1 ? 'שיחה אחת עובדת' : `${n} שיחות עובדות`, boardQuiet:'שקט',
+  boardWait: n => `${n} מחכים לך`, free:'פנוי',
+  lastMove:'פעולה אחרונה', openThis:'פתיחת השיחה', noLink:'אין קישור לשיחה הזו', close:'סגירה',
+
+  nowKicker:'מחכה לך', nowKickerN: (n, k) => `מחכה לך · 1 מתוך ${n}` + (k ? ` (${k} בדילוג)` : ''),
+  loading:'טוען...', nothingWaiting:'אין שום דבר שמחכה לך. יופי.', hiddenPrivacy:'מוסתר בגלל פרטיות',
+  whyLab:'למה זה כאן', pick: v => `ההמלצה של קלוד: ${v}.`, yes:'כן', no:'לא',
+  goChat:'לדבר על זה בשיחה', goNew:'לדבר על זה בשיחה חדשה', nowAnswer:'לכתוב תשובה', later:'אחר כך',
+  hideUntil:'להסתיר עד:', d1:'מחר', d3:'בעוד 3 ימים', d7:'בשבוע הבא',
+  noteQuick:'לחיצה רק שומרת את התשובה ברשימת המשימות שלך. שום דבר לא נשלח, לא משולם ולא מתפרסם.',
+  noteChat:'פותח את השיחה שכבר עובדת על זה.', noteNew:'פותח שיחה חדשה עם השאלה מוכנה. שום דבר לא נשלח עד שלוחצים שלח.',
+  noteLater:' "אחר כך" רק מסתיר את זה.', skip:'לדלג בינתיים (לא שומר כלום)',
+  hideList:'להסתיר את הרשימה', showList: (top, n) => `לראות את ${top} הבאים (${n} בסך הכל)`,
+  tagMain:'ראשי', tagMoney:'כסף', more: n => `ועוד ${n} ברשימת המשימות שלך`,
+  saidYes:'נשמר: כן.', saidNo:'נשמר: לא.', saidLater: d => `מוסתר עד ${d}.`,
+  saidNext:' קלוד ימשיך מזה בשיחה הבאה.', nextOne:' הנה הבא בתור.',
+  'fail.needs-chat':'את זה צריך לסגור בשיחה, אז לא נשמר כלום.', 'fail.not-waiting':'זה כבר זז, אז לא נשמר כלום.',
+  whyWaiting:'מחכה לך ברשימת המשימות שלך.', whyChat:'זה דורש קצת מחשבה, אז זה הולך לשיחה ולא ללחיצה מהירה.',
+
+  feedTitle:'מה קרה לאחרונה', feedQuiet:'שקט. לא קרה כלום ב-24 השעות האחרונות.', feedPrivacy:'מוסתר בגלל פרטיות.', notRead:'עוד לא נקרא',
+
+  nextTitle:'הגרסה הבאה של הדף',
+  nextHint:'יש רעיון לשיפור הדף? שומרים אותו כאן. שמירה לא מתחילה שום עבודה. כשמוכנים, מסמנים את הרעיונות ולוחצים "לבנות גרסה חדשה".',
+  noIdeas:'אין עדיין רעיונות. כותבים אחד בתיבה למעלה ולוחצים "שמירה כרעיון לגרסה הבאה".',
+  'il.building':'בבנייה', 'il.ready':'נבנה', noBuild:'עוד לא נבנתה גרסה.',
+  'bl.send':'מחכה ללחיצה על שלח בשיחה שנפתחה', 'bl.building':'בבנייה עכשיו', 'bl.ready':'מוכנה בעותק הנפרד',
+  'bl.needs-you':'נעצרה, מחכה לך', 'bl.cancelled':'בוטלה',
+  ideasN: n => n === 1 ? 'רעיון אחד' : `${n} רעיונות`, started: a => ` · התחילה ${a}`,
+  buildOpen:'פתיחת שיחת הבנייה', buildNew: n => n ? `לבנות גרסה חדשה (${n})` : 'לבנות גרסה חדשה', buildCancel:'ביטול הבנייה',
+  buildNote:'הבנייה קורית בעותק נפרד של הדף. הדף הזה לא משתנה עד שמאשרים את ההחלפה, אז ביטול לא מוחק כלום.',
+  buildAlready:'כבר יש בנייה פתוחה, אז נפתחה השיחה שלה במקום להתחיל עוד אחת.',
+  buildNoIdeas:'צריך לסמן לפחות רעיון אחד.', buildFail:'לא הצלחתי להתחיל. לא השתנה כלום.',
+  buildStarted:'נפתחה שיחה עם הבנייה מוכנה. לוחצים שם שלח כדי להתחיל. הדף הזה נשאר כמו שהוא.',
+  toggleFail:'לא הצלחתי לשנות. אפשר לנסות שוב.', cancelled:'בוטל. הדף החי לא השתנה.',
+  cancelRunning:'היא נבנית ממש עכשיו. צריך לעצור אותה קודם בשיחה שלה.', cancelFail:'לא הצלחתי לבטל.',
+
+  footer:'הדף קורא את הקבצים במחשב שלך כל 10 שניות, בלי מודל ובלי מכסה. הכפתורים רק שומרים טקסט ופותחים שיחה בקלוד. שום דבר לא רץ עד שלוחצים שם שלח. מהדף הזה שום דבר לא נשלח, לא משולם ולא מתפרסם.',
+
+  tStep: (i, n) => `שלב ${i} מתוך ${n}`, whyHere:'למה זה כאן:', back:'הקודם', next:'הבא', gotIt:'הבנתי', skipTour:'לדלג על הסיור',
+  't1.title':'המצב בשתי שניות',
+  't1.body':'כאן רואים כמה שיחות עובדות עכשיו, כמה דברים מחכים לך, ומתי הדף התעדכן בפעם האחרונה.',
+  't1.why':'כדי לדעת איפה הכל עומד בלי לפתוח עשר שיחות.',
+  't2.title':'בקשה אחת, מקום אחד',
+  't2.body':'כותבים מה צריך, כמו שמדברים. הדף מנחש לאיזה פרויקט זה שייך ומראה למה, ואפשר לשנות לפני ששולחים. המשך למשהו קיים חוזר לאותה שיחה, ומשימה חדשה נפתחת בשיחה חדשה בתיקייה הנכונה. אפשר לצרף תמונות.',
+  't2.why':'דלת אחת לכל הבקשות. הדף רק שומר את הטקסט ופותח את השיחה. שום דבר לא רץ עד שלוחצים שלח בקלוד.',
+  't3.title':'שולחן לכל שיחה',
+  't3.body':'כל שיחה עם קלוד מ-24 השעות האחרונות מקבלת שולחן. ידיים שמקלידות: היא עובדת. zzz: היא בהפסקה. שלט מעל השולחן: היא נעצרה, או שסיימה והתור שלך.',
+  't3.why':'כדי להפסיק לחפש ברשימת השיחות מי עושה מה.',
+  't4.title':'דבר אחד בכל פעם',
+  't4.body':'הכרטיס הזה מראה רק דבר אחד שמחכה לך עכשיו. אחד, בכוונה. כל השאר מחכים בתור.',
+  't4.why':'ההחלטות שלך, העבודה של קלוד. אחד בכל פעם, כדי שלא יצטבר לך בראש.',
+  't5.title':'כן, לא או אחר כך',
+  't5.body':'בשאלות פשוטות יש "כן" ו"לא", וההמלצה של קלוד מסומנת. "אחר כך" מסתיר את השאלה עד היום שבוחרים. שאלות גדולות (כסף, כיוון) מקבלות כפתור שפותח עליהן שיחה.',
+  't5.why':'לחיצה רק שומרת את התשובה. הדף לא שולח, לא משלם ולא מפרסם כלום. קלוד ממשיך מהתשובה בשיחה הבאה, וכל דבר גדול עדיין מחכה שם ל"כן" שלך.',
+  't6.title':'מה קרה לאחרונה',
+  't6.body':'הפעולות האחרונות מכל השיחות, החדשה ביותר למעלה.',
+  't6.why':'קמים מהמחשב, חוזרים, ותוך עשר שניות יודעים מה קרה.',
+  't7.title':'הגרסה הבאה',
+  't7.body':'רעיונות לשיפור הדף מחכים כאן. מסמנים את מה שרוצים ולוחצים "לבנות גרסה חדשה". הבנייה קורית בעותק נפרד, והדף הזה לא משתנה עד שמאשרים את ההחלפה.',
+  't7.why':'שמירת רעיון לא מתחילה שום עבודה, אז אפשר לזרוק רעיונות מתי שרוצים.',
+
+  agoNow:'עכשיו', agoM: m => `לפני ${m} דק'`, agoH: h => `לפני ${h} שע'`, agoD: d => d === 1 ? 'לפני יום' : `לפני ${d} ימים`,
+
+  /* texts the server sends as keys */
+  's.working':'עובדת', 's.stuck': n => `עצרה לפני ${n} דק'. אולי מחכה לאישור שלך`, 's.done':'סיימה. התור שלך', 's.idle':'בהפסקה',
+  's.untitled':'שיחה בלי שם',
+  's.tool.read-files':'קוראת קבצים', 's.tool.search-files':'מחפשת בקבצים', 's.tool.find-files':'מחפשת קבצים',
+  's.tool.edit-file':'כותבת בקובץ', 's.tool.write-file':'כותבת קובץ', 's.tool.run':'מריצה פקודה',
+  's.tool.search-web':'מחפשת ברשת', 's.tool.read-web':'קוראת דף ברשת', 's.tool.helper':'שלחה עוזר',
+  's.tool.helpers':'מפעילה כמה עוזרים', 's.tool.browser':'עובדת בדפדפן', 's.tool.tool':'משתמשת בכלי', 's.tool.working':'עובדת',
+  's.req-send':'מחכה ללחיצה על שלח בשיחה', 's.req-unsent':'לא נשלחה. אפשר לפתוח שוב', 's.req-question':'בשיחה מחכה לך שאלה',
+  's.req-result':'יש תשובה', 's.in-chat':'התשובה מחכה בשיחה', 's.hidden':'(הטקסט מוסתר כאן, הוא שמור)',
+  's.idea-hidden':'(רעיון שמור)', 's.existing':'שיחה קיימת',
+  's.build-cancelled':'בוטלה. הדף החי לא השתנה', 's.build-ready':'מוכנה בעותק הנפרד. מחכה לאישור שלך להחלפה',
+  's.build-send':'מחכה ללחיצה על שלח בשיחה שנפתחה', 's.build-check':'השיחה עצרה בלי לסיים. כדאי לפתוח ולבדוק',
+  's.tasks':'רשימת המשימות', 's.updated': n => `עודכן: ${n}`,
+},
+en: {
+  brand:'The office', langBtn:'עברית', langAria:'Switch the page to Hebrew', tourBtn:'▶ 1-minute tour',
+  sWork:'Chats working', sWait:'Waiting on you', sAge:'Updated', agoS: s => `${s}s ago`,
+  pulseConnecting:'Connecting...', pulseOk:'Up to date. Refreshes itself every 10 seconds.',
+  pulsePrivacy:'<span class="err">View paused.</span> Something private showed up in the data, so nothing is shown.',
+  pulseDown:'<span class="err">The office server isn\'t running.</span> Start it again and this page fills in by itself.',
+  pulseLost:'<span class="err">Connection dropped, retrying.</span> You\'re seeing the last good read.',
+  liveLost:'Lost the connection to the office server', livePrivacy:'View paused for privacy',
+
+  askTitle:'Ask Claude',
+  askHint:'Write it the way you\'d say it: a new job, a follow-up, or an answer to a question. The page guesses where it belongs, opens a Claude chat with your text ready, and you just press Send.',
+  askLabel:'What do you need?', askPh:'For example: write a short Instagram post about this week\'s sale',
+  addPic:'Add a picture', picHint: k => `or paste one (${k}), or drag it into the box`,
+  goesTo:'Goes to:', srProject:'Project', srTarget:'Chat',
+  askSend:'Open in Claude', askIdea:'Save as an idea for the next version', askNote:'Nothing runs until you press Send inside Claude.',
+  routeGuess: m => `Guessed from "${m}"`, routeNone:'No clear hint, so the general folder', routeMine:'Your pick',
+  routeItem:'Goes to the chat that owns this question', routeSame:'Goes back to the same chat, with everything it already knows',
+  routeNewProj:'. Claude first checks whether one already exists, and opens a new one only after your OK',
+  newProject:'New project', tNew:'New chat', tFollow:'Follow up: ', tAnswer:'Answer: ', tFollowReq:'Follow up: that request\'s chat',
+  reqTitle:'Your requests',
+  'req.send':'Waiting for Send', 'req.unsent':'Not sent', 'req.working':'Working', 'req.needs-you':'Waiting on you', 'req.result':'Answer ready',
+  sameChat:' · same chat', openChat:'Open the chat', openAgain:'Open again', follow:'Follow up',
+  carryCopied: k => `Copied. In the chat that opened, paste (${k}) and press Send.`,
+  carryManual:'The chat is open. Copy your text from the box, paste it there and press Send.',
+  carryNew:'A new chat opened with your text ready. Press Send there. Until then, nothing runs.',
+  'err.bad-text':'Write something first (up to 2000 characters).', 'err.bad-project':'Pick a project.',
+  'err.no-item':'That question already moved. Nothing was saved.', 'err.bad-target':'Pick where it goes.',
+  errSave:'Couldn\'t save it. Nothing changed. Try again in a moment.', errReopen:'Couldn\'t find that request.',
+  ideaLen:'An idea is one short line (up to 500 characters).',
+  ideaPics:'Pictures go with a request, not an idea. Press "Open in Claude", or remove the picture.',
+  ideaFail:'Couldn\'t save the idea. Try again in a moment.', ideaDup:'That idea is already on the list.',
+  ideaSaved:'Saved to the ideas for the next version. Nothing was built.',
+  picLimit: n => `Up to ${n} pictures per request.`, picType:'That isn\'t a picture file (PNG, JPG, GIF or WebP).',
+  picBig:'That picture is too big (up to 8 MB).', picAdded:'Picture added. It goes along with the request when the chat opens.',
+  picFail:'Couldn\'t add that picture. Try again.', picAlt: n => `Picture ${n}`, picRemove: n => `Remove picture ${n}`,
+
+  officeTitle:'Who\'s working on what',
+  officeHint:'Every desk is a Claude chat from the last 24 hours. Click a desk to see what it\'s doing right now.',
+  sceneAria:'The office: one desk per chat from the last 24 hours', legendAria:'What the colors mean', legendIdle:'On a break (zzz)',
+  'st.work':'Working', 'st.stuck':'Stopped, take a look', 'st.done':'Finished, your turn', 'st.idle':'On a break', 'st.empty':'Free desk',
+  'kd.read':'reading files', 'kd.write':'writing', 'kd.run':'running a command', 'kd.web':'on the web', 'kd.help':'with a helper',
+  boardTitle:'Today in the office', boardWork: n => n === 1 ? '1 chat working' : `${n} chats working`, boardQuiet:'All quiet',
+  boardWait: n => `${n} waiting on you`, free:'Free',
+  lastMove:'last move', openThis:'Open this chat', noLink:'No link for this chat', close:'Close',
+
+  nowKicker:'Waiting on you', nowKickerN: (n, k) => `Waiting on you · 1 of ${n}` + (k ? ` (${k} skipped)` : ''),
+  loading:'Loading...', nothingWaiting:'Nothing is waiting on you. Nice.', hiddenPrivacy:'Hidden for privacy',
+  whyLab:'Why this is here', pick: v => `Claude's pick: ${v}.`, yes:'Yes', no:'No',
+  goChat:'Talk it through in the chat', goNew:'Talk it through in a new chat', nowAnswer:'Write an answer', later:'Later',
+  hideUntil:'Hide it until:', d1:'Tomorrow', d3:'In 3 days', d7:'Next week',
+  noteQuick:'A tap only saves your answer to your task list. Nothing is sent, paid or published.',
+  noteChat:'Opens the chat that is already working on this.', noteNew:'Opens a new chat with the question ready. Nothing is sent until you press Send.',
+  noteLater:' "Later" just hides it.', skip:'Skip for now (saves nothing)',
+  hideList:'Hide the list', showList: (top, n) => `See the next ${top} (${n} in total)`,
+  tagMain:'main', tagMoney:'money', more: n => `and ${n} more in your task list`,
+  saidYes:'Saved: Yes.', saidNo:'Saved: No.', saidLater: d => `Hidden until ${d}.`,
+  saidNext:' Claude picks it up in the next chat.', nextOne:' Here\'s the next one.',
+  'fail.needs-chat':'This one has to be settled in a chat, so nothing was saved.', 'fail.not-waiting':'This one already moved, so nothing was saved.',
+  whyWaiting:'Waiting on you in your task list.', whyChat:'This one needs some thinking, so it goes to a chat, not a quick tap.',
+
+  feedTitle:'What just happened', feedQuiet:'All quiet. Nothing happened in the last 24 hours.', feedPrivacy:'Hidden for privacy.', notRead:'Not read yet',
+
+  nextTitle:'The next version of this page',
+  nextHint:'Got an idea to improve this page? Save it here. Saving starts no work. When you\'re ready, tick the ideas and press "Build the next version".',
+  noIdeas:'No ideas yet. Write one in the box above and press "Save as an idea for the next version".',
+  'il.building':'In the build', 'il.ready':'Built', noBuild:'No version built yet.',
+  'bl.send':'Waiting for Send in the chat that opened', 'bl.building':'Building now', 'bl.ready':'Ready in the separate copy',
+  'bl.needs-you':'Stopped, waiting on you', 'bl.cancelled':'Cancelled',
+  ideasN: n => n === 1 ? '1 idea' : `${n} ideas`, started: a => ` · started ${a}`,
+  buildOpen:'Open the build chat', buildNew: n => n ? `Build the next version (${n})` : 'Build the next version', buildCancel:'Cancel this build',
+  buildNote:'The build happens in a separate copy of the page. This page doesn\'t change until you approve the switch, so cancelling loses nothing.',
+  buildAlready:'A build is already open, so its chat opened instead of starting another one.',
+  buildNoIdeas:'Tick at least one idea first.', buildFail:'Couldn\'t start it. Nothing changed.',
+  buildStarted:'A chat opened with the build ready. Press Send there to start. This page stays as it is.',
+  toggleFail:'Couldn\'t change it. Try again.', cancelled:'Cancelled. The live page never changed.',
+  cancelRunning:'It\'s building right now. Stop it in its own chat first.', cancelFail:'Couldn\'t cancel it.',
+
+  footer:'This page reads the files on your computer every 10 seconds, with no model and no quota. The buttons only save text and open a chat in Claude. Nothing runs until you press Send there. Nothing is sent, paid for or published from this page.',
+
+  tStep: (i, n) => `Step ${i} of ${n}`, whyHere:'Why it\'s here:', back:'Back', next:'Next', gotIt:'Got it', skipTour:'Skip the tour',
+  't1.title':'Where things stand, in 2 seconds',
+  't1.body':'How many chats are working right now, how many things are waiting on you, and when the page last updated.',
+  't1.why':'So you know where everything stands without opening ten chats.',
+  't2.title':'One place to ask',
+  't2.body':'Write what you need, the way you\'d say it. The page guesses which project it belongs to and shows why, and you can change it before sending. A follow-up goes back to the same chat, and a new job opens a new chat in the right folder. You can add pictures too.',
+  't2.why':'One door for every request. The page only saves your text and opens the chat. Nothing runs until you press Send in Claude.',
+  't3.title':'A desk for every chat',
+  't3.body':'Every Claude chat from the last 24 hours gets a desk. Typing hands: it\'s working. Zzz: it\'s on a break. A sign above the desk: it stopped, or it finished and it\'s your turn.',
+  't3.why':'So you stop digging through the sidebar to find out which chat is doing what.',
+  't4.title':'One thing at a time',
+  't4.body':'This card shows the one thing waiting on you right now. Just one, on purpose. Everything else waits in line.',
+  't4.why':'You make the calls, Claude does the work. One at a time, so nothing piles up in your head.',
+  't5.title':'Yes, No or Later',
+  't5.body':'Simple questions get Yes and No, with Claude\'s pick marked. Later hides the question until the day you choose. Big ones (money, direction) get a button that opens a chat about them instead.',
+  't5.why':'A tap only saves your answer. This page never sends, pays or publishes anything. Claude picks up your answer in the next chat, and anything big still waits for your yes there.',
+  't6.title':'What just happened',
+  't6.body':'The latest moves from every chat, newest on top.',
+  't6.why':'Step away, come back, and catch up in ten seconds.',
+  't7.title':'The next version',
+  't7.body':'Ideas for improving this page wait here. Tick the ones you want and press "Build the next version". The build happens in a separate copy, and this page doesn\'t change until you approve the switch.',
+  't7.why':'Saving an idea never starts any work, so you can drop ideas in any time.',
+
+  agoNow:'just now', agoM: m => `${m} min ago`, agoH: h => `${h} h ago`, agoD: d => d === 1 ? '1 day ago' : `${d} days ago`,
+
+  's.working':'Working', 's.stuck': n => `Stopped ${n} min ago. It may be waiting for your OK`, 's.done':'Finished. Your turn', 's.idle':'On a break',
+  's.untitled':'Untitled chat',
+  's.tool.read-files':'Reading files', 's.tool.search-files':'Searching files', 's.tool.find-files':'Looking for files',
+  's.tool.edit-file':'Editing a file', 's.tool.write-file':'Writing a file', 's.tool.run':'Running a command',
+  's.tool.search-web':'Searching the web', 's.tool.read-web':'Reading a web page', 's.tool.helper':'Sent a helper',
+  's.tool.helpers':'Running a few helpers', 's.tool.browser':'Working in the browser', 's.tool.tool':'Using a tool', 's.tool.working':'Working',
+  's.req-send':'Waiting for you to press Send in the chat', 's.req-unsent':'Not sent. You can open it again', 's.req-question':'A question is waiting for you in the chat',
+  's.req-result':'Answer ready', 's.in-chat':'The answer is waiting in the chat', 's.hidden':'(Text hidden here. It is saved.)',
+  's.idea-hidden':'(saved idea)', 's.existing':'Existing chat',
+  's.build-cancelled':'Cancelled. The live page did not change', 's.build-ready':'Ready in the separate copy. Waiting for your OK to switch',
+  's.build-send':'Waiting for Send in the chat that opened', 's.build-check':'The chat stopped before finishing. Open it and check',
+  's.tasks':'Task list', 's.updated': n => `Updated: ${n}`,
+},
+};
+let lang = '', langChosen = false;
+try { lang = localStorage.getItem('officeLang') || ''; langChosen = !!lang; } catch (e) {}
+if (!STR[lang]) lang = /^(he|iw)/i.test(navigator.language || '') ? 'he' : 'en';
+const t = (k, ...a) => { const v = STR[lang][k] ?? STR.he[k] ?? k; return typeof v === 'function' ? v(...a) : v; };
+// a server text: its key when the page knows it, otherwise the text as sent
+const L = (o, f) => { const k = o?.[f + 'Key']; return k && ('s.' + k) in STR[lang] ? t('s.' + k, o[f + 'Arg']) : (o?.[f] ?? ''); };
+const LOC = () => lang === 'he' ? 'he-IL' : 'en-GB';
+
+let data = null, lastOk = 0, selected = null, nowIdx = 0, failing = false, privacy = false;
+const PALETTE = ['#7F77DD', '#1D9E75', '#D85A30', '#D4537E', '#378ADD', '#BA7517', '#639922', '#E24B4A', '#5F5E5A', '#2f6f62'];
+function projColor(pid){
+  const p = (data?.projects || []).find(x => x.id === pid);
+  if (p?.color) return p.color;
+  let h = 0; for (const c of String(pid || 'other')) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+  return PALETTE[h % PALETTE.length];
+}
+function projName(p){ return p.id === 'new-project' ? t('newProject') : (lang === 'en' && p.nameEn) || p.name; }
+function officeName(){
+  const o = data?.officeName;
+  return (o && typeof o === 'object' ? o[lang] || o.he || o.en : o) || t('brand');
+}
+
+const P = (x,y,w,h,f,c) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${f}"${c?` class="${c}"`:''}/>`;
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const T = (x,y,txt,size,fill,extra='') => `<text x="${x}" y="${y}" style="font-size:${size}px;fill:${fill};font-family:system-ui,sans-serif${extra}">${esc(txt)}</text>`;
+
+function ago(iso){
+  const s = Math.max(0, (Date.now() - new Date(iso).getTime())/1000);
+  if (s < 60) return t('agoNow');
+  if (s < 3600) return t('agoM', Math.round(s/60));
+  if (s < 86400) return t('agoH', Math.round(s/3600));
+  return t('agoD', Math.round(s/86400));
+}
+const hhmm = iso => new Date(iso).toLocaleTimeString(LOC(), {hour:'2-digit', minute:'2-digit'});
+
+function kindIcon(k){ // small pixel sign above a working desk: what kind of action
+  const c = '#4A4036';
+  if (k==='read') return P(0,0,8,6,'#FFFFFF')+P(0,0,8,1,c)+P(0,5,8,1,c)+P(4,0,1,6,c);
+  if (k==='write') return P(0,5,2,2,'#EF9F27')+P(2,3,2,2,'#EF9F27')+P(4,1,2,2,'#EF9F27')+P(6,0,2,1,c);
+  if (k==='run') return P(0,0,9,7,'#2C2C2A')+P(1,2,2,1,'#5DCAA5')+P(3,3,1,1,'#5DCAA5')+P(1,4,2,1,'#5DCAA5')+P(5,5,3,1,'#5DCAA5');
+  if (k==='web') return P(1,0,5,7,'#85B7EB')+P(0,1,7,5,'#85B7EB')+P(3,0,1,7,'#FFFFFF')+P(0,3,7,1,'#FFFFFF');
+  if (k==='help') return P(0,2,3,3,'#F2C9A0')+P(5,0,3,3,'#F2C9A0')+P(0,5,3,2,'#AFA9EC')+P(5,3,3,2,'#AFA9EC');
+  return P(0,0,8,7,'#FFFFFF')+P(1,1,6,1,c)+P(1,3,4,1,c)+P(1,5,5,1,c);
+}
+
+function deskSVG(d, x, y){
+  const s = d.state, col = projColor(d.pid), on = s !== 'empty', title = on ? L(d, 'title') : t('free');
+  const lbl = on ? `${title}: ${t('st.' + s)}` : t('st.empty');
+  let g = `<g class="desk${selected===d.id?' sel':''}" data-id="${esc(d.id)}" ${on?'tabindex="0" role="button"':''} transform="translate(${x},${y})" aria-label="${esc(lbl)}"><title>${esc(lbl)}</title>`;
+  g += P(-4,-26,80,84,'transparent');
+  g += P(42,0,16,18,'#8a6a4a')+P(44,2,12,14,'#a5835f');
+  if (on){
+    const dy = s==='idle' ? 3 : 0;
+    g += P(44,-5+dy,12,5,'#5A3A22')+P(43,-3+dy,1,4,'#5A3A22')+P(44,dy,12,10,'#F2C9A0');
+    g += s==='idle' ? P(46,5+dy,3,1,'#3A2A1E')+P(51,5+dy,3,1,'#3A2A1E') : P(46,4,2,2,'#3A2A1E')+P(52,4,2,2,'#3A2A1E')+P(48,8,4,1,'#C98F6A');
+    g += P(41,10,18,10,col);
+  }
+  g += P(0,18,70,7,'#C98F5A')+P(2,25,66,12,'#B57D4A')+P(4,28,62,1,'#A56E3E')+P(4,37,4,4,'#9A6638')+P(62,37,4,4,'#9A6638');
+  g += P(39,16,20,3,'#ECE9E2');
+  if (s==='work') g += P(42,14,4,3,'#F2C9A0','hl')+P(52,14,4,3,'#F2C9A0','hr');
+  else if (on) g += P(40,15,4,3,'#F2C9A0')+P(56,15,4,3,'#F2C9A0');
+  const scr = {work:'#CDF2E4', stuck:'#FCE8C4', done:'#E4EFD6', idle:'#DDE2E7', empty:'#DDE2E7'}[s];
+  g += P(6,-1,28,19,'#4A5866')+P(8,1,24,14,scr)+P(18,17,4,2,'#4A5866');
+  if (s==='work') g += P(10,3,16,2,'#1D9E75','ln')+P(10,7,12,2,'#5DCAA5','ln')+P(10,11,18,2,'#1D9E75','ln');
+  if (s==='stuck') g += P(12,4,16,2,'#EF9F27')+P(12,8,10,2,'#EF9F27');
+  if (s==='done') g += P(13,8,3,2,'#639922')+P(16,10,2,2,'#639922')+P(18,6,2,4,'#639922')+P(20,4,2,2,'#639922');
+  g += P(62,11,5,7,'#FFFFFF')+P(62,11,5,2,on?col:'#B4B2A9');
+  if (s==='work') g += `<g transform="translate(60,-15)">${kindIcon(d.kind)}</g>`;
+  if (s==='stuck' || s==='done'){
+    const bc = s==='stuck' ? '#BA7517' : '#2f6f62';
+    g += P(58,-22,14,13,'#FFFFFF')+P(58,-22,14,1,bc)+P(58,-10,14,1,bc)+P(58,-22,1,13,bc)+P(71,-22,1,13,bc)+P(60,-9,3,3,'#FFFFFF');
+    g += s==='stuck' ? P(64,-19,2,5,bc)+P(64,-13,2,2,bc) : P(61,-16,2,2,bc)+P(63,-14,2,2,bc)+P(65,-16,2,2,bc)+P(67,-18,2,2,bc);
+  }
+  if (s==='idle') g += `<text class="zz" x="62" y="-6" style="font-size:7px;fill:#8a8f99;font-weight:600">z z</text>`;
+  const dot = {work:'#639922', stuck:'#EF9F27', done:'#2f6f62', idle:'#B4B2A9', empty:'#D3D1C7'}[s];
+  const name = title.length > 16 ? title.slice(0,15)+'…' : title;
+  g += `<rect class="lbl" x="2" y="44" width="66" height="12" rx="3" fill="#FFFFFF" stroke="#C9B38E" stroke-width=".8" shape-rendering="auto"/>`;
+  g += `<circle cx="8" cy="50" r="2" fill="${dot}" shape-rendering="auto"/>`;
+  g += T(13, 52.4, name, 6.4, on ? '#4A4036' : '#9a8f80', ';direction:ltr;unicode-bidi:plaintext');
+  return g + '</g>';
+}
+
+function drawScene(){
+  const cols = innerWidth < 560 ? 2 : 3, cellW = 101, cellH = 66;
+  const desks = (data?.desks || []).slice();
+  while (desks.length < cols * 2) desks.push({id:'empty'+desks.length, state:'empty', pid:'other'});
+  const rows = Math.ceil(desks.length / cols), W = cols*cellW + 18, top = 72, H = top + rows*cellH + 24;
+  const svg = $('scene');
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  // wall with a wood rail, then a warm wood floor
+  let s = P(0,0,W,62,'#F6ECD8')+P(0,56,W,6,'#C99A63')+P(0,62,W,4,'#A97C4A');
+  for (let i=0; 66+i*15 < H; i++) s += P(0,66+i*15,W,15,i%2?'#E8CFA4':'#E3C799')+P(0,66+i*15,W,1,'#D2B282');
+  const win = x => P(x,10,40,34,'#8a6a4a')+P(x+2,12,36,30,'#D8EEFB')+P(x+19,12,2,30,'#8a6a4a')+P(x+2,26,36,2,'#8a6a4a')+P(x+5,31,10,4,'#FFFFFF')+P(x+25,16,8,3,'#FFFFFF');
+  s += win(20) + win(W-60);
+  const working = (data?.desks||[]).filter(d=>d.state==='work').length, waitN = (data?.waiting||[]).length;
+  const bx = Math.round(W/2 - 52), mid = bx + 42, bidi = `;text-anchor:middle;direction:${lang === 'he' ? 'rtl' : 'ltr'}`;
+  s += P(bx,6,84,46,'#8a6a4a')+P(bx+2,8,80,42,'#FFFFFF');
+  s += T(mid,19,t('boardTitle'),6.6,'#5F5E5A',bidi);
+  s += T(mid,31, working ? t('boardWork', working) : t('boardQuiet'), 7, '#286c37', bidi + ';font-weight:600');
+  if (data?.waiting) s += T(mid,43, t('boardWait', waitN), 7, '#955300', bidi + ';font-weight:600');
+  const cx = bx + 100, now = new Date();
+  const ha = (now.getHours()%12 + now.getMinutes()/60)/12*2*Math.PI, ma = now.getMinutes()/60*2*Math.PI;
+  s += `<circle cx="${cx}" cy="26" r="9" fill="#FFFFFF" stroke="#8a6a4a" stroke-width="1.5" shape-rendering="auto"/>`;
+  s += `<line x1="${cx}" y1="26" x2="${(cx+5*Math.sin(ha)).toFixed(1)}" y2="${(26-5*Math.cos(ha)).toFixed(1)}" stroke="#444441" stroke-width="1.5" shape-rendering="auto"/>`;
+  s += `<line x1="${cx}" y1="26" x2="${(cx+7*Math.sin(ma)).toFixed(1)}" y2="${(26-7*Math.cos(ma)).toFixed(1)}" stroke="#888780" stroke-width="1" shape-rendering="auto"/>`;
+  const plant = x => P(x+2,58,10,8,'#D9A06B')+P(x,50,14,9,'#639922')+P(x+3,46,8,6,'#97C459')+P(x+4,56,6,2,'#3B6D11');
+  s += plant(3) + plant(W-17);
+  desks.forEach((d,i) => {
+    const c = i % cols, r = Math.floor(i / cols);
+    s += deskSVG(d, 22 + c*cellW, top + 26 + r*cellH);
+  });
+  svg.innerHTML = s;
+  svg.querySelectorAll('.desk[role=button]').forEach(el => {
+    const pick = () => { selected = el.dataset.id; drawScene(); drawBubble(true); };
+    el.addEventListener('click', pick);
+    el.addEventListener('keydown', e => { if (e.key==='Enter' || e.key===' ') { e.preventDefault(); pick(); } });
+  });
+}
+
+function closeBubble(){ const was = selected; selected = null; $('bubble').hidden = true; drawScene();
+  const el = was && $('scene').querySelector(`.desk[data-id="${CSS.escape(was)}"]`); if (el) el.focus(); }
+
+function drawBubble(focus){
+  const b = $('bubble'), d = (data?.desks||[]).find(x => x.id === selected);
+  if (!d) { b.hidden = true; return; }
+  $('bTitle').textContent = L(d, 'title');
+  const doing = d.state==='work' && d.kind && d.kind !== 'other' ? ` · ${t('kd.' + d.kind)}` : '';
+  $('bMeta').textContent = `${t('st.' + d.state)}${doing} · ${t('lastMove')} ${ago(d.since)} (${hhmm(d.since)})`;
+  $('bWhat').textContent = L(d, 'line');
+  $('bActions').innerHTML = (d.link ? `<a class="btn sm" href="${esc(d.link)}">${esc(t('openThis'))}</a>` : `<span class="note">${esc(t('noLink'))}</span>`)
+    + `<button class="btn2 sm" type="button" id="bClose">${esc(t('close'))}</button>`;
+  $('bClose').onclick = closeBubble;
+  b.hidden = false;
+  // place the bubble over the desk, kept inside the office box
+  const box = $('sceneBox').getBoundingClientRect(), el = $('scene').querySelector(`.desk[data-id="${CSS.escape(d.id)}"]`);
+  if (!el) return;
+  const r = el.getBoundingClientRect(), bw = b.offsetWidth, bh = b.offsetHeight;
+  let left = r.left - box.left + r.width/2 - bw/2, topY = r.top - box.top - bh - 4;
+  if (topY < 0) topY = r.bottom - box.top + 4;
+  left = Math.max(6, Math.min(left, box.width - bw - 6));
+  b.style.left = left + 'px'; b.style.top = topY + 'px';
+  if (focus) b.querySelector('a,button').focus();
+}
+
+/* one card at a time: Yes / No / Later records the answer through the local server; nothing else */
+let cardId = null, nonce = '', busy = false;
+const newNonce = () => [...crypto.getRandomValues(new Uint8Array(8))].map(b => b.toString(16).padStart(2,'0')).join('');
+
+function drawNow(){
+  // no task list connected: the card has nothing to show, so it steps aside
+  $('nowCard').hidden = !!data && !Array.isArray(data.waiting);
+  const w = data?.waiting || [], has = w.length > 0;
+  $('nowActions').hidden = !has; $('queueBtn').hidden = !has; $('nowSkip').hidden = !has;
+  $('nowWhy').hidden = !has; $('nowNote').hidden = !has;
+  if (!has) {
+    $('nowHead').textContent = t('nowKicker');
+    $('nowName').textContent = data ? t('nothingWaiting') : (privacy ? t('hiddenPrivacy') : t('loading'));
+    $('nowPick').hidden = true; $('laterRow').hidden = true; $('queue').hidden = true; cardId = null;
+    return;
+  }
+  nowIdx = nowIdx % w.length;
+  const it = w[nowIdx], top = Math.min(5, w.length), open = !$('queue').hidden;
+  if (it.id !== cardId) { cardId = it.id; nonce = newNonce(); $('laterRow').hidden = true; $('aLater').setAttribute('aria-expanded','false'); }
+  $('nowHead').textContent = t('nowKickerN', w.length, nowIdx);
+  $('nowName').textContent = it.ask || it.name;
+  const why = it.why || [];
+  $('nowWhy1').textContent = it.whyAuto ? (why[0] || t('whyWaiting')) : (why[0] || '');
+  $('nowWhy2').textContent = it.whyAuto ? t('whyChat') : (why[1] || '');
+  $('nowPick').hidden = !it.pick;
+  if (it.pick) $('nowPick').innerHTML = `<b>${esc(t('pick', t(it.pick === 'yes' ? 'yes' : 'no')))}</b> <span dir="auto">${esc(it.pickWhy || '')}</span>`;
+  $('quickBtns').hidden = !it.quick;
+  $('aYes').classList.toggle('rec', it.pick === 'yes'); $('aNo').classList.toggle('rec', it.pick === 'no');
+  const go = $('nowGo');
+  go.hidden = it.quick;
+  go.href = it.chat || it.newChat;
+  go.textContent = it.chat ? t('goChat') : t('goNew');
+  $('nowNote').textContent = it.quick ? t('noteQuick') : (it.chat ? t('noteChat') : t('noteNew')) + t('noteLater');
+  $('queueBtn').textContent = open ? t('hideList') : t('showList', top, w.length);
+  $('queueBtn').setAttribute('aria-expanded', String(open));
+  $('queue').innerHTML = w.slice(0, top).map(x => `<li dir="auto">${esc(x.name)}${x.main?`<span class="tag">${esc(t('tagMain'))}</span>`:''}${x.money?`<span class="tag">${esc(t('tagMoney'))}</span>`:''}</li>`).join('')
+    + (w.length > top ? `<li style="list-style:none;color:var(--muted)">${esc(t('more', w.length - top))}</li>` : '');
+}
+
+function drawFeed(){
+  const f = data?.feed || [];
+  $('feed').innerHTML = f.length
+    ? f.map(x => `<div><time datetime="${esc(x.at)}">${esc(ago(x.at))}</time><span dir="auto"><b>${esc(L(x, 'who'))}:</b> ${esc(L(x, 'what'))}</span></div>`).join('')
+    : `<div>${esc(privacy ? t('feedPrivacy') : data ? t('feedQuiet') : t('notRead'))}</div>`;
+}
+
+function drawPulse(){
+  const el = $('pulse'), working = (data?.desks||[]).filter(d=>d.state==='work').length;
+  $('sWork').textContent = data ? working : '-';
+  $('sWait').textContent = data && data.waiting ? data.waiting.length : '-';
+  $('sAge').textContent = lastOk ? t('agoS', Math.round((Date.now() - lastOk)/1000)) : '-';
+  if (privacy) { el.innerHTML = t('pulsePrivacy'); return; }
+  if (failing && !lastOk) { el.innerHTML = t('pulseDown'); return; }
+  if (failing) { el.innerHTML = t('pulseLost'); return; }
+  el.textContent = lastOk ? t('pulseOk') : t('pulseConnecting');
+}
+
+let lastLive = '';
+function announce(msg){ if (msg !== lastLive) { lastLive = msg; $('live').textContent = msg; } }
+
+function drawAll(){ drawScene(); drawBubble(); drawNow(); drawFeed(); drawAsk(); drawNext(); drawPulse(); }
+
+async function refresh(){
+  try {
+    const r = await fetch('/api/live', {cache:'no-store'});
+    const j = await r.json();
+    if (j.error === 'privacy') { privacy = true; data = null; selected = null; drawAll(); announce(t('livePrivacy')); return; }
+    if (!r.ok || j.error) throw new Error(j.error || r.status);
+    data = j; lastOk = Date.now(); failing = false; privacy = false;
+    if (!langChosen && STR[data.defaultLang] && data.defaultLang !== lang) { lang = data.defaultLang; applyLang(); return; }
+    if (selected && !data.desks.some(d => d.id === selected)) selected = null;
+    $('brand').textContent = document.title = officeName();
+    drawScene(); drawBubble(); drawNow(); drawFeed(); drawAsk(); drawNext();
+  } catch (e) { failing = true; announce(t('liveLost')); }
+  drawPulse();
+}
+
+/* language: one switch, everything redraws in place */
+function applyLang(){
+  const html = document.documentElement;
+  html.lang = lang; html.dir = lang === 'he' ? 'rtl' : 'ltr';
+  document.querySelectorAll('[data-t]').forEach(n => n.textContent = t(n.dataset.t));
+  document.querySelectorAll('[data-tp]').forEach(n => n.placeholder = t(n.dataset.tp));
+  document.querySelectorAll('[data-ta]').forEach(n => n.setAttribute('aria-label', t(n.dataset.ta)));
+  $('picHint').textContent = t('picHint', PASTE);
+  const lb = $('langBtn'); lb.textContent = t('langBtn'); lb.lang = lang === 'he' ? 'en' : 'he'; lb.setAttribute('aria-label', t('langAria'));
+  $('brand').textContent = document.title = officeName();
+  optsKey = '';
+  drawAll();
+  drawPics();
+  if (tIdx >= 0) tourShow(tIdx);
+}
+$('langBtn').addEventListener('click', () => {
+  lang = lang === 'he' ? 'en' : 'he'; langChosen = true;
+  try { localStorage.setItem('officeLang', lang); } catch (e) {}
+  applyLang();
+  announce(t('langBtn') === 'English' ? 'עברית' : 'English');
+});
+
+/* the tour: 7 steps, one part of the page at a time; a step whose part is hidden is left out */
+const STEPS = [
+  {el:'statsBar', k:'t1'}, {el:'askPanel', k:'t2'}, {el:'officePanel', k:'t3'}, {el:'nowCard', k:'t4'},
+  {el:'nowActions', alt:'nowCard', k:'t5'}, {el:'feedPanel', k:'t6'}, {el:'nextPanel', k:'t7'},
+];
+let tIdx = -1, tLit = null, tSteps = STEPS;
+const shown = a => a && !a.hidden && a.offsetHeight;
+function tourTarget(st){ const a = $(st.el); return shown(a) ? a : $(st.alt || st.el); }
+function tourShow(i){
+  if (tLit) tLit.classList.remove('spot');
+  tIdx = i; const st = tSteps[i];
+  tLit = tourTarget(st); tLit.classList.add('spot');
+  $('tStep').textContent = t('tStep', i + 1, tSteps.length);
+  $('tTitle').textContent = t(st.k + '.title'); $('tBody').textContent = t(st.k + '.body'); $('tWhy').textContent = t(st.k + '.why');
+  $('tBack').hidden = i === 0;
+  $('tNext').textContent = i === tSteps.length-1 ? t('gotIt') : t('next');
+  const card = $('tourCard'); card.hidden = false; $('tourCatch').hidden = false;
+  // on a wide screen the card sits beside the lit part, not on top of it
+  const rr = tLit.getBoundingClientRect(), wide = innerWidth >= 760 && rr.width < innerWidth * .7;
+  const side = !wide ? 'mid' : (rr.left + rr.width/2 > innerWidth/2 ? 'left' : 'right');
+  card.style.left = side === 'left' ? '16px' : side === 'right' ? 'auto' : '50%';
+  card.style.right = side === 'right' ? '16px' : 'auto';
+  card.style.transform = side === 'mid' ? 'translateX(-50%)' : 'none';
+  // keep the lit part above the card
+  const room = side === 'mid' ? innerHeight - card.offsetHeight - 32 : innerHeight - 16, r = tLit.getBoundingClientRect();
+  if (r.top < 8 || r.top + Math.min(r.height, room) > room) scrollBy({top: r.top - 12, behavior: matchMedia('(prefers-reduced-motion:reduce)').matches ? 'auto' : 'smooth'});
+  $('tNext').focus();
+}
+function tourEnd(){
+  if (tLit) tLit.classList.remove('spot'); tLit = null; tIdx = -1;
+  $('tourCard').hidden = true; $('tourCatch').hidden = true;
+  $('tourBtn').classList.remove('fresh');
+  try { localStorage.setItem('officeTourSeen', '1'); } catch (e) {}
+  $('tourBtn').focus();
+}
+$('tourBtn').addEventListener('click', () => {
+  $('bubble').hidden = true; selected = null; drawScene();
+  tSteps = STEPS.filter(st => shown(tourTarget(st)));
+  tourShow(0);
+});
+$('tNext').addEventListener('click', () => tIdx < tSteps.length-1 ? tourShow(tIdx+1) : tourEnd());
+$('tBack').addEventListener('click', () => tIdx > 0 && tourShow(tIdx-1));
+$('tSkip').addEventListener('click', tourEnd);
+$('tourCatch').addEventListener('click', e => e.stopPropagation());
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if (tIdx >= 0) tourEnd(); else if (!$('bubble').hidden) closeBubble();
+});
+$('tourCard').addEventListener('keydown', e => { // keep Tab inside the tour card
+  if (e.key !== 'Tab') return;
+  const f = [...$('tourCard').querySelectorAll('button')].filter(b => !b.hidden);
+  if (e.shiftKey && document.activeElement === f[0]) { e.preventDefault(); f[f.length-1].focus(); }
+  else if (!e.shiftKey && document.activeElement === f[f.length-1]) { e.preventDefault(); f[0].focus(); }
+});
+try { if (!localStorage.getItem('officeTourSeen')) $('tourBtn').classList.add('fresh'); } catch (e) {}
+
+$('nowSkip').addEventListener('click', () => { nowIdx++; $('nowSaved').hidden = true; drawNow(); });
+
+async function tap(answer, days){
+  if (busy || !cardId) return;
+  busy = true;
+  const btns = [...$('nowCard').querySelectorAll('button')]; btns.forEach(b => b.disabled = true);
+  const msg = $('nowSaved'); msg.classList.remove('err');
+  try {
+    const r = await fetch('/api/answer', {method:'POST', cache:'no-store',
+      headers:{'Content-Type':'application/json', 'X-Office':'1'},
+      body: JSON.stringify({id: cardId, answer, days, nonce})});
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(STR[lang]['fail.' + j.error] ? t('fail.' + j.error) : t('errSave'));
+    const when = j.until ? new Date(j.until + 'T00:00').toLocaleDateString(LOC(), {weekday:'short', day:'numeric', month:'short'}) : '';
+    msg.textContent = (answer === 'later' ? t('saidLater', when) : t(answer === 'yes' ? 'saidYes' : 'saidNo') + t('saidNext')) + t('nextOne');
+    announce(msg.textContent);
+    nowIdx = 0; cardId = null;
+  } catch (e) {
+    msg.textContent = e.message; msg.classList.add('err');
+  }
+  msg.hidden = false;
+  btns.forEach(b => b.disabled = false); busy = false;
+  await refresh();
+}
+$('aYes').addEventListener('click', () => tap('yes'));
+$('aNo').addEventListener('click', () => tap('no'));
+$('aLater').addEventListener('click', () => { const h = !$('laterRow').hidden; $('laterRow').hidden = h; $('aLater').setAttribute('aria-expanded', String(!h)); });
+$('laterRow').querySelectorAll('[data-days]').forEach(b => b.addEventListener('click', () => tap('later', Number(b.dataset.days))));
+$('queueBtn').addEventListener('click', () => { $('queue').hidden = !$('queue').hidden; drawNow(); });
+
+/* ask: the server records the text once and hands back a claude:// link; this page never starts a chat by itself */
+const post = async (path, body) => {
+  const r = await fetch(path, {method:'POST', cache:'no-store', headers:{'Content-Type':'application/json', 'X-Office':'1'}, body: JSON.stringify(Object.assign({lang}, body))});
+  return [r.ok, await r.json().catch(() => ({}))];
+};
+let askNonce = newNonce(), askBusy = false, projTouched = false, extraTargets = {}, optsKey = '';
+function guessProject(text){ // a visible guess, never final: it can be changed before sending
+  const ids = (data?.projects || []).map(p => p.id);
+  for (const [id, pat] of data?.hints || []) {
+    let m = null;
+    try { m = ids.includes(id) && text.match(new RegExp(pat, 'i')); } catch (e) {}
+    if (m) return [id, t('routeGuess', m[0])];
+  }
+  const def = ids.includes(data?.defaultProject) ? data.defaultProject : ids[0];
+  return [def, t('routeNone')];
+}
+function drawRoute(){
+  const tgt = $('askTarget').value, ps = $('askProject');
+  const fixed = tgt !== 'new'; // a follow-up or an answer stays with its own chat and project
+  ps.disabled = fixed;
+  if (fixed) { $('routeWhy').textContent = tgt.startsWith('item:') ? t('routeItem') : t('routeSame'); return; }
+  if (!projTouched) { const [id, why] = guessProject($('askText').value); if (id) ps.value = id; $('routeWhy').textContent = why; }
+  else $('routeWhy').textContent = t('routeMine');
+  if (ps.value === 'new-project') $('routeWhy').textContent += t('routeNewProj');
+}
+function reqProject(r){
+  const p = (data?.projects || []).find(x => x.id === r.pid);
+  return p ? projName(p) : L(r, 'project');
+}
+function drawAsk(){
+  const ps = $('askProject'), ts = $('askTarget');
+  const projs = data?.projects || [], desks = (data?.desks || []).filter(d => d.local && d.state !== 'empty');
+  const key = JSON.stringify([lang, projs, desks.map(d => [d.local, L(d, 'title')]), extraTargets]);
+  if (key !== optsKey) { // rebuild the menus only when they change, and keep what is picked
+    optsKey = key;
+    const pv = ps.value, tv = ts.value;
+    ps.innerHTML = projs.map(p => `<option value="${esc(p.id)}">${esc(projName(p))}</option>`).join('');
+    ts.innerHTML = `<option value="new">${esc(t('tNew'))}</option>`
+      + Object.entries(extraTargets).map(([v, l]) => `<option value="${esc(v)}">${esc(typeof l === 'function' ? l() : l)}</option>`).join('')
+      + desks.filter(d => !extraTargets[d.local]).map(d => `<option value="${esc(d.local)}">${esc(t('tFollow') + L(d, 'title'))}</option>`).join('');
+    if (pv && projs.some(p => p.id === pv)) ps.value = pv;
+    ts.value = [...ts.options].some(o => o.value === tv) ? tv : 'new';
+  }
+  drawRoute();
+  const rq = data?.requests || [];
+  $('reqList').innerHTML = !rq.length ? '' : `<p class="lab">${esc(t('reqTitle'))}</p>` + rq.map(r => `<div class="req">
+    <div class="top"><span class="badge ${esc(r.state)}">${esc(STR[lang]['req.' + r.state] ? t('req.' + r.state) : r.state)}</span>
+      <span class="note">${esc(ago(r.at))} · <span dir="auto">${esc(reqProject(r))}</span>${r.mode === 'continue' ? esc(t('sameChat')) : ''}</span></div>
+    <p class="txt" dir="auto">${esc(L(r, 'text'))}</p>
+    ${r.reply || r.replyKey ? `<p class="rep" dir="auto">${esc(L(r, 'reply'))}</p>` : `<p class="note" dir="auto">${esc(L(r, 'line'))}</p>`}
+    <div class="row">${r.chat ? `<a class="btn2 sm" href="${esc(r.chat)}">${esc(t('openChat'))}</a>` : ''}
+      ${r.state === 'send' || r.state === 'unsent' ? `<button class="btn2 sm" type="button" data-reopen="${esc(r.id)}">${esc(t('openAgain'))}</button>` : ''}
+      ${r.local ? `<button class="textBtn" type="button" data-follow="${esc(r.local)}">${esc(t('follow'))}</button>` : ''}</div>
+  </div>`).join('');
+  $('reqList').querySelectorAll('[data-reopen]').forEach(b => b.onclick = () => reopenReq(b.dataset.reopen));
+  $('reqList').querySelectorAll('[data-follow]').forEach(b => b.onclick = () => followUp(b.dataset.follow));
+}
+function setTarget(v, label){
+  if (![...$('askTarget').options].some(o => o.value === v)) { extraTargets = {[v]: label}; optsKey = ''; drawAsk(); }
+  $('askTarget').value = v; drawRoute();
+  $('askPanel').scrollIntoView({block:'start', behavior: matchMedia('(prefers-reduced-motion:reduce)').matches ? 'auto' : 'smooth'});
+  $('askText').focus();
+}
+function followUp(local){ setTarget(local, () => t('tFollowReq')); }
+function askMsg(text, err){ const m = $('askSaved'); m.textContent = text; m.classList.toggle('err', !!err); m.hidden = false; announce(text); }
+async function carry(j){ // new chat: the text is already in it. Existing chat: copy, then open it
+  if (j.mode === 'continue') {
+    let copied = false;
+    try { await navigator.clipboard.writeText(j.copy); copied = true; } catch (e) {}
+    location.href = j.link;
+    askMsg(copied ? t('carryCopied', PASTE) : t('carryManual'));
+    if (!copied) { $('askText').value = j.copy; $('askText').select(); }
+    return copied;
+  }
+  location.href = j.link;
+  askMsg(t('carryNew'));
+  return true;
+}
+const aerr = e => STR[lang]['err.' + e] ? t('err.' + e) : t('errSave');
+$('askSend').addEventListener('click', async () => {
+  const text = $('askText').value.trim();
+  if (askBusy) return;
+  if (!text) { askMsg(t('err.bad-text'), true); return; }
+  askBusy = true; $('askSend').disabled = $('askIdea').disabled = true;
+  try {
+    const [ok, j] = await post('/api/request', {text, project: $('askProject').value, target: $('askTarget').value, nonce: askNonce,
+      images: askPics.map(p => p.name)});
+    if (!ok) throw new Error(aerr(j.error));
+    if (await carry(j)) { $('askText').value = ''; clearPics(); }
+    askNonce = newNonce(); projTouched = false; extraTargets = {}; optsKey = '';
+  } catch (e) { askMsg(e.message, true); }
+  askBusy = false; $('askSend').disabled = $('askIdea').disabled = false;
+  await refresh();
+});
+async function reopenReq(id){
+  const [ok, j] = await post('/api/reopen', {id});
+  if (!ok) { askMsg(t('errReopen'), true); return; }
+  await carry(j);
+}
+$('askIdea').addEventListener('click', async () => {
+  const text = $('askText').value.trim();
+  if (askBusy) return;
+  if (!text || text.length > 500) { askMsg(t('ideaLen'), true); return; }
+  if (askPics.length) { askMsg(t('ideaPics'), true); return; }
+  askBusy = true; $('askSend').disabled = $('askIdea').disabled = true;
+  try {
+    const [ok, j] = await post('/api/idea', {text, nonce: askNonce});
+    if (!ok) throw new Error(t('ideaFail'));
+    askMsg(j.duplicate ? t('ideaDup') : t('ideaSaved'));
+    $('askText').value = ''; askNonce = newNonce();
+  } catch (e) { askMsg(e.message, true); }
+  askBusy = false; $('askSend').disabled = $('askIdea').disabled = false;
+  await refresh();
+});
+
+/* pictures: saved on this computer when added; the request tells Claude where each one is */
+const PIC_TYPES = ['image/png', 'image/jpeg', 'image/gif', 'image/webp'], PIC_MAX = 8 * 1024 * 1024, PIC_LIMIT = 4;
+let askPics = [];
+function drawPics(){
+  const box = $('askPics');
+  box.querySelectorAll('.pic').forEach(n => n.remove());
+  askPics.forEach((p, i) => {
+    const d = document.createElement('div');
+    d.className = 'pic';
+    d.innerHTML = `<img alt="${esc(t('picAlt', i + 1))}" src="${p.url}"><button type="button" aria-label="${esc(t('picRemove', i + 1))}">×</button>`;
+    d.querySelector('button').onclick = () => { URL.revokeObjectURL(p.url); askPics.splice(i, 1); drawPics(); };
+    box.insertBefore(d, $('askAddPic'));
+  });
+}
+function clearPics(){ askPics.forEach(p => URL.revokeObjectURL(p.url)); askPics = []; drawPics(); }
+const toBase64 = f => new Promise((ok, bad) => {
+  const r = new FileReader();
+  r.onload = () => ok(String(r.result).split(',')[1] || '');
+  r.onerror = () => bad(r.error);
+  r.readAsDataURL(f);
+});
+async function addPics(files){
+  for (const f of files) {
+    if (askPics.length >= PIC_LIMIT) { askMsg(t('picLimit', PIC_LIMIT), true); break; }
+    if (!PIC_TYPES.includes(f.type)) { askMsg(t('picType'), true); continue; }
+    if (f.size > PIC_MAX) { askMsg(t('picBig'), true); continue; }
+    try {
+      const [ok, j] = await post('/api/upload', {data: await toBase64(f)});
+      if (!ok) throw new Error();
+      if (!askPics.some(p => p.name === j.image)) askPics.push({name: j.image, url: URL.createObjectURL(f)});
+      drawPics();
+      askMsg(t('picAdded'));
+    } catch (e) { askMsg(t('picFail'), true); }
+  }
+}
+$('askAddPic').addEventListener('click', () => $('askFile').click());
+$('askFile').addEventListener('change', async e => { await addPics([...e.target.files]); e.target.value = ''; });
+$('askText').addEventListener('paste', e => {
+  const files = [...(e.clipboardData?.files || [])].filter(f => f.type.startsWith('image/'));
+  if (files.length) { e.preventDefault(); addPics(files); }
+});
+$('askText').addEventListener('dragover', e => { if ([...e.dataTransfer.types].includes('Files')) { e.preventDefault(); $('askText').classList.add('drop'); } });
+$('askText').addEventListener('dragleave', () => $('askText').classList.remove('drop'));
+$('askText').addEventListener('drop', e => {
+  $('askText').classList.remove('drop');
+  const files = [...(e.dataTransfer?.files || [])];
+  if (files.length) { e.preventDefault(); addPics(files); }
+});
+$('askText').addEventListener('input', drawRoute);
+$('askProject').addEventListener('change', () => { projTouched = true; drawRoute(); });
+$('askTarget').addEventListener('change', drawRoute);
+$('nowAnswer').addEventListener('click', () => {
+  const it = (data?.waiting || [])[nowIdx % Math.max(1, (data?.waiting || []).length)];
+  if (it) { const q = (it.ask || it.name).slice(0, 60); setTarget('item:' + it.id, () => t('tAnswer') + q); }
+});
+
+/* the next version: ideas wait; one build at a time, in a separate copy */
+let buildNonce = newNonce(), nextBusy = false;
+function nextMsg(text, err){ const m = $('nextSaved'); m.textContent = text; m.classList.toggle('err', !!err); m.hidden = false; announce(text); }
+function drawNext(){
+  const ideas = data?.ideas || [], b = data?.build;
+  $('ideaList').innerHTML = ideas.length ? ideas.map(i => {
+    const edit = i.state === 'queued' || i.state === 'included';
+    return `<li>${edit
+      ? `<label><input type="checkbox" data-idea="${esc(i.id)}" ${i.state === 'included' ? 'checked' : ''}><span dir="auto">${esc(L(i, 'text'))}</span></label>`
+      : `<span dir="auto" style="flex:1">${esc(L(i, 'text'))}</span><span class="badge ${esc(i.state)}">${esc(STR[lang]['il.' + i.state] ? t('il.' + i.state) : i.state)}</span>`}</li>`;
+  }).join('') : `<li class="note">${esc(t('noIdeas'))}</li>`;
+  $('ideaList').querySelectorAll('[data-idea]').forEach(c => c.onchange = async () => {
+    c.disabled = true;
+    const [ok] = await post('/api/idea-include', {id: c.dataset.idea, include: c.checked});
+    if (!ok) { c.checked = !c.checked; nextMsg(t('toggleFail'), true); }
+    await refresh();
+  });
+  const open = b && !['ready', 'cancelled'].includes(b.state);
+  $('buildLine').innerHTML = b
+    ? `<span class="badge ${esc(b.state)}">${esc(STR[lang]['bl.' + b.state] ? t('bl.' + b.state) : b.state)}</span> <span class="note">${esc(t('ideasN', b.count) + t('started', ago(b.at)))}</span><br><span dir="auto">${esc(L(b, 'line'))}</span>`
+    : esc(t('noBuild'));
+  const inc = ideas.filter(i => i.state === 'included').length;
+  $('buildBtn').textContent = open ? t('buildOpen') : t('buildNew', inc);
+  $('buildBtn').disabled = !open && !inc;
+  $('buildCancel').hidden = !(open && b.state !== 'building');
+}
+$('buildBtn').addEventListener('click', async () => {
+  if (nextBusy) return; nextBusy = true; $('buildBtn').disabled = true;
+  try {
+    const [ok, j] = await post('/api/build', {nonce: buildNonce});
+    if (!ok && j.error === 'build-open') { location.href = j.link; nextMsg(t('buildAlready')); }
+    else if (!ok) throw new Error(j.error === 'no-ideas' ? t('buildNoIdeas') : t('buildFail'));
+    else { location.href = j.link; nextMsg(t('buildStarted')); buildNonce = newNonce(); }
+  } catch (e) { nextMsg(e.message, true); }
+  nextBusy = false; await refresh();
+});
+$('buildCancel').addEventListener('click', async () => {
+  const b = data?.build; if (!b || nextBusy) return; nextBusy = true;
+  const [ok, j] = await post('/api/build-cancel', {id: b.id});
+  nextMsg(ok ? t('cancelled') : (j.error === 'running' ? t('cancelRunning') : t('cancelFail')), !ok);
+  nextBusy = false; await refresh();
+});
+
+let narrow = innerWidth < 560;
+addEventListener('resize', () => { const n = innerWidth < 560; if (n !== narrow) { narrow = n; drawScene(); } drawBubble(); });
+setInterval(drawPulse, 1000);
+setInterval(() => { if (!document.hidden) refresh(); }, 10000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
+applyLang();
+refresh();
+</script>
+</body>
+</html>

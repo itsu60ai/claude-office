@@ -1,0 +1,17 @@
+{
+  "officeName": {"he": "המשרד", "en": "The office"},
+  "defaultLang": "he",
+  "defaultProject": "main",
+  "newProjectsFolder": "~/Projects",
+  "projects": [
+    {
+      "id": "main",
+      "name": "העבודה שלי",
+      "nameEn": "My work",
+      "folder": "~",
+      "color": "#1D9E75",
+      "keywords": ""
+    }
+  ],
+  "privateNames": {}
+}

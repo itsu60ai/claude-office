@@ -1,0 +1,23 @@
+{
+  "items": [
+    {
+      "id": "TASK-1",
+      "name": "Logo color for the landing page",
+      "ask": "Go with the green version of the logo?",
+      "why": ["Claude made two versions. The green one reads better on the white background."],
+      "quick": true,
+      "pick": "yes",
+      "pickWhy": "It matches the buttons already on the page.",
+      "project": "main",
+      "status": "waiting"
+    },
+    {
+      "id": "TASK-2",
+      "name": "Price for the starter package",
+      "next": "Pick a price before the page goes live",
+      "quick": false,
+      "project": "main",
+      "status": "waiting"
+    }
+  ]
+}

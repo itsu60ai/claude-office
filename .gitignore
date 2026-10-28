@@ -1,0 +1,9 @@
+# Your own settings, questions and history stay on your computer
+office.json
+tasks.json
+tasks.json.tmp
+state/
+next/
+__pycache__/
+*.pyc
+.DS_Store
