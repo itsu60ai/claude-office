@@ -73,7 +73,7 @@ Missing something? Write it down. Press Build, and Claude builds a new version o
 
 <div align="center">
 
-📷 Up to 4 pictures per request &nbsp;·&nbsp; 🌐 Hebrew and English &nbsp;·&nbsp; 🎨 6 skins, dark mode included &nbsp;·&nbsp; 🔄 Refreshes itself every 10 seconds
+📎 Up to 6 files per request, any kind (PDF, picture and more) &nbsp;·&nbsp; 🌐 Hebrew and English &nbsp;·&nbsp; 🎨 6 skins, dark mode included &nbsp;·&nbsp; 🔄 Refreshes itself every 10 seconds
 
 </div>
 
@@ -140,7 +140,7 @@ There's a sample in `tasks.example.json`. A question can be written in Hebrew, E
 |---|---|
 | `officeName` | The name at the top of the page, in Hebrew and English |
 | `defaultLang` | `he` or `en`, the language on first open |
-| `defaultProject` | The project picked when the page can't guess |
+| `defaultProject` | Where answers to questions from tasks.json go when they name no project. The request box starts on "Claude decides" |
 | `newProjectsFolder` | Where Claude checks for, and if needed creates, a new project |
 | `projects` | Your projects. Each has `id` (lowercase English), `name`, `nameEn`, `folder`, `color`, `keywords` |
 | `privateNames` | Names replaced with an alias, e.g. `{"Dana Cohen": "client"}` |
@@ -175,6 +175,6 @@ There's a sample in `tasks.example.json`. A question can be written in Hebrew, E
 | `VERSION` | The version number, added to every feedback message |
 | `assets/` | The pictures on this page, with made-up data |
 | `fonts/` | The skins' fonts, kept here so the page loads nothing from outside. OFL license, see `OFL-*.txt` |
-| `state/` | Created on its own: request history, pictures and backups. Never committed |
+| `state/` | Created on its own: request history, attached files and backups. Never committed |
 
 </details>

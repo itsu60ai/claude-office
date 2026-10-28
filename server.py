@@ -73,8 +73,9 @@ WAIT_MIN = 30          # a chat that finished within this many minutes is "your 
 STUCK_S = 300          # an open turn with no transcript write for this long is shown as "stopped"
 DESK_WINDOW_H = 24     # chats active in the last day get a desk
 MAX_DESKS = 9
-IMG_MAX = 8 * 1024 * 1024  # bytes per picture
-IMG_PER_REQUEST = 4
+IMG_MAX = 20 * 1024 * 1024  # bytes per attached file
+IMG_PER_REQUEST = 6
+FILE_NAME = re.compile(r"(IMG-[0-9a-f]{16}\.(png|jpg|gif|webp)|FILE-[0-9a-f]{16}\.[a-z0-9]{1,8})")
 IMG_KINDS = {"png": b"\x89PNG", "jpg": b"\xff\xd8\xff", "gif": b"GIF8", "webp": b"RIFF"}
 DEDUP_S = 600          # the same text to the same place within 10 minutes is one request
 SEND_WAIT_S = 1800     # after this, a request nobody sent is shown as "not sent"
@@ -84,6 +85,7 @@ _app_cache = {}        # path -> (mtime, parsed subset)
 _tx_path = {}          # cli session -> transcript path
 _qlock = threading.Lock()  # one writer for the queue log and tasks.json
 _match = {}            # tag -> {"local", "cli"} once a chat with that tag is found
+_no_tag = set()        # (tag, cli) whose fixed opening part was read and has no tag
 _cfg = {"mt": None, "data": None}
 
 
@@ -400,6 +402,25 @@ def plain(v):
     return (v.get("en") or v.get("he")) if isinstance(v, dict) else (v or "")
 
 
+STEP_DO = ("send", "copy", "fill")
+
+
+def steps(clean, c, has_chat):
+    """A card's steps: each one a short line and a button that does the thing.
+    send = carry `say` to the item's chat (or a new chat), copy = put `say` on the clipboard,
+    fill = put `say` in the Ask box for the user to send themselves. A step that can't work is left out."""
+    out = []
+    for s in (c.get("steps") or [])[:4]:
+        if not isinstance(s, dict) or s.get("do") not in STEP_DO:
+            continue
+        text, label, say = two(clean, s.get("text"), 200), two(clean, s.get("label"), 30), two(clean, s.get("say"), 600)
+        if not (text and label and say):
+            continue
+        to = "new" if s["do"] == "send" and (s.get("to") == "new" or not has_chat) else "item"
+        out.append({"do": s["do"], "text": text, "label": label, "say": say, "to": to})
+    return out
+
+
 def waiting(clean):
     rows, projs = [], projects()
     for it in read_tasks()[1]["items"]:
@@ -420,6 +441,7 @@ def waiting(clean):
                      "why": [two(clean, w, 160, "") for w in why[:2]], "whyAuto": auto,
                      "pick": it.get("pick") if quick and it.get("pick") in ("yes", "no") else None,
                      "pickWhy": two(clean, it.get("pickWhy"), 160),
+                     "steps": steps(clean, it, bool(chat)),
                      "chat": CHAT_LINK % chat if chat else None,
                      "newChat": NEW_CHAT % (quote(q, safe=""), quote(projs[p]["folder"], safe=""))})
     rows.sort(key=lambda r: not r["quick"])  # quick taps first; otherwise the file's order
@@ -522,6 +544,8 @@ def qstate():
         k, rid = r.get("kind"), r.get("id")
         if k == "request":
             reqs[rid] = r
+        elif k == "request-hide":
+            reqs.pop(rid, None)
         elif k == "idea":
             ideas[rid] = dict(r, state="queued")
         elif k == "idea-include" and rid in ideas and ideas[rid]["state"] in ("queued", "included"):
@@ -577,14 +601,18 @@ def find_tag(tag, since, chat=None):
         tx = transcript(ch["cli"])
         if not tx or (not chat and ch["last"] < since - 60):
             continue
+        if not chat and (tag, ch["cli"]) in _no_tag:
+            continue
         try:
             size = os.path.getsize(tx)
-            if os.path.getmtime(tx) < since - 60 or (not chat and size > 3000000):
+            if os.path.getmtime(tx) < since - 60:
                 continue
             with open(tx, "rb") as f:
                 if chat:
                     f.seek(max(0, size - 400000))
                 if not typed(f.read(400000), b):
+                    if not chat and size >= 400000:
+                        _no_tag.add((tag, ch["cli"]))  # the opening part is written, it will not change
                     continue
         except OSError:
             continue
@@ -621,12 +649,19 @@ CHAT_WORDS = {
            "new": "בקשה לפרויקט חדש:\n%s\n\nלפני שפותחים משהו: תבדוק בתיקייה %s אם כבר יש פרויקט שמתאים. "
                   "תת-תיקייה רגילה היא לא פרויקט. אם באמת צריך פרויקט חדש, תציע לי שם, ורק אחרי שאני מאשר "
                   "תפתח את התיקייה ותוסיף אותה ל-office.json בתיקיית המשרד (%s).",
-           "pic": "\nתמונה מצורפת (תפתח אותה עם Read): %s"},
+           "auto": "\n\n(נשלח מהמשרד בלי לבחור פרויקט. תבין לבד לאיזה פרויקט זה שייך, לפי office.json בתיקיית המשרד "
+                   "(%s) ולפי התיקיות ב-%s, תכתוב לי בשורה אחת איפה אתה עובד, ותמשיך. אם באמת לא ברור, תשאל אותי.)",
+           "pic": "\nתמונה מצורפת (תפתח אותה עם Read): %s",
+           "file": "\nקובץ מצורף (תפתח אותו עם Read): %s"},
     "en": {"item": "My answer to question %s (in tasks.json in the office folder):\n%s",
            "new": "A request for a new project:\n%s\n\nBefore creating anything: check %s for a project that already "
                   "fits. A plain subfolder is not a project. If it really needs a new one, suggest a name, and only "
                   "after I approve create the folder and add it to office.json in the office folder (%s).",
-           "pic": "\nAttached picture (open it with Read): %s"},
+           "auto": "\n\n(Sent from the office without picking a project. Work out which project it belongs to from "
+                   "office.json in the office folder (%s) and the folders in %s, tell me in one line where you are "
+                   "working, and carry on. If it really isn't clear, ask me.)",
+           "pic": "\nAttached picture (open it with Read): %s",
+           "file": "\nAttached file (open it with Read): %s"},
 }
 
 
@@ -638,13 +673,16 @@ def chat_text(r):
         t = w["item"] % (r["item"], t)
     elif r.get("project") == "new-project":
         t = w["new"] % (t, config()["newProjectsFolder"], HERE)
+    elif r.get("project") == "auto":
+        t += w["auto"] % (HERE, config()["newProjectsFolder"])
     for name in r.get("images") or []:
-        t += w["pic"] % os.path.normpath(os.path.join(UPLOADS, name))
+        t += w["pic" if name.startswith("IMG-") else "file"] % os.path.normpath(os.path.join(UPLOADS, name))
     return t + "\n\n(office request %s)" % r["id"]
 
 
 def upload(body):
-    """A picture for a request. Checked by its first bytes, saved under a name made from its content."""
+    """A file for a request. A picture is checked by its first bytes; anything else keeps its own extension.
+    Saved under a name made from its content."""
     data = body.get("data")
     if not isinstance(data, str) or len(data) > IMG_MAX * 4 // 3 + 8:
         return 400, {"error": "too-big"}
@@ -652,12 +690,18 @@ def upload(body):
         raw = base64.b64decode(data, validate=True)
     except ValueError:
         return 400, {"error": "bad-image"}
+    if not raw:
+        return 400, {"error": "bad-image"}
+    if len(raw) > IMG_MAX:
+        return 400, {"error": "too-big"}
     ext = next((k for k, magic in IMG_KINDS.items() if raw.startswith(magic)), None)
     if ext == "webp" and raw[8:12] != b"WEBP":
         ext = None
-    if not ext or len(raw) > IMG_MAX:
-        return 400, {"error": "bad-image" if not ext else "too-big"}
-    name = "IMG-%s.%s" % (hashlib.sha256(raw).hexdigest()[:16], ext)
+    if ext:
+        name = "IMG-%s.%s" % (hashlib.sha256(raw).hexdigest()[:16], ext)
+    else:
+        m = re.search(r"\.([A-Za-z0-9]{1,8})$", body.get("name") if isinstance(body.get("name"), str) else "")
+        name = "FILE-%s.%s" % (hashlib.sha256(raw).hexdigest()[:16], m.group(1).lower() if m else "bin")
     os.makedirs(UPLOADS, exist_ok=True)
     path = os.path.normpath(os.path.join(UPLOADS, name))
     if not os.path.exists(path):
@@ -673,7 +717,7 @@ def good_images(v):
     if not (isinstance(v, list) and len(v) <= IMG_PER_REQUEST):
         return None
     for n in v:
-        if not (isinstance(n, str) and re.fullmatch(r"IMG-[0-9a-f]{16}\.(png|jpg|gif|webp)", n)
+        if not (isinstance(n, str) and FILE_NAME.fullmatch(n)
                 and os.path.isfile(os.path.join(UPLOADS, n))):
             return None
     return list(dict.fromkeys(v))
@@ -702,7 +746,7 @@ def make_request(body):
     if images:
         rec["images"] = images
     if target == "new":
-        if pid == "new-project":
+        if pid in ("new-project", "auto"):
             rec.update(project=pid, folder=config()["newProjectsFolder"])
         elif pid in projs:
             rec.update(project=pid, folder=projs[pid]["folder"])
@@ -736,6 +780,18 @@ def reopen(body):
     rid = body.get("id")
     r = qstate()[0].get(rid) if isinstance(rid, str) and re.fullmatch(r"R-[0-9a-f]{6}", rid) else None
     return (200, request_link(r)) if r else (404, {"error": "no-request"})
+
+
+def hide_request(body):
+    """Takes a request off the list. The log keeps it and the chat in Claude stays as it is."""
+    rid = body.get("id")
+    if not (isinstance(rid, str) and re.fullmatch(r"R-[0-9a-f]{6}", rid)):
+        return 400, {"error": "no-request"}
+    with _qlock:
+        if rid not in qstate()[0]:
+            return 404, {"error": "no-request"}
+        qappend(dict(stamp(), kind="request-hide", id=rid))
+    return 200, {"hidden": rid}
 
 
 def add_idea(body):
@@ -856,15 +912,15 @@ def office_view(clean):
     t, rows = now(), []
     projs = config()["projects"]
     names = {p["id"]: clean(p["name"], p["id"], 40) for p in projs}
-    names["new-project"] = "פרויקט חדש"
+    names = {"auto": "קלוד יחליט", **names, "new-project": "פרויקט חדש"}
     for r in sorted(reqs.values(), key=lambda x: -x["ts"])[:8]:
         if t - r["ts"] > 3 * 86400:
             break
         m = find_tag("(office request %s)" % r["id"], r["ts"], r.get("chat"))
         reply, rkey, arg = None, None, None
         if not m:
-            state, line, key = ("send", "מחכה ללחיצה על שלח בשיחה", "req-send") if t - r["ts"] < SEND_WAIT_S else \
-                ("unsent", "לא נשלחה. אפשר לפתוח שוב", "req-unsent")
+            state, line, key = ("send", "השיחה נפתחה בקלוד עם הטקסט. נשאר ללחוץ שם שלח.", "req-send") \
+                if t - r["ts"] < SEND_WAIT_S else ("unsent", "לא נשלחה. אם השיחה נסגרה, אפשר לפתוח אותה מחדש.", "req-unsent")
         else:
             tu = turn(m["cli"], clean)
             if tu["state"] in ("work", "stuck"):
@@ -901,8 +957,9 @@ def office_view(clean):
         txt = clean(i["text"], None, 140)
         il.append({"id": i["id"], "text": txt or "(רעיון שמור)", "textKey": None if txt else "idea-hidden",
                    "state": i["state"]})
-    picks = [{"id": p["id"], "name": names[p["id"]], "nameEn": clean(p["nameEn"], None, 40), "color": p["color"]}
-             for p in projs]
+    picks = [{"id": "auto", "name": "קלוד יחליט", "nameEn": "Claude decides", "color": "#888780"}]
+    picks += [{"id": p["id"], "name": names[p["id"]], "nameEn": clean(p["nameEn"], None, 40), "color": p["color"]}
+              for p in projs]
     picks.append({"id": "new-project", "name": "פרויקט חדש", "nameEn": "New project", "color": "#888780"})
     return rows, il, cur, picks
 
@@ -928,7 +985,7 @@ def live():
         data = {"now": iso(now()), "error": "privacy", "desks": [], "waiting": [], "feed": [],
                 "requests": [], "ideas": [], "build": None, "projects": []}
     c = config()
-    data.update(officeName=c["officeName"], defaultLang=c["defaultLang"], defaultProject=c["defaultProject"],
+    data.update(officeName=c["officeName"], defaultLang=c["defaultLang"], defaultProject="auto",
                 hints=hints(), version=version())
     return data
 
@@ -983,7 +1040,7 @@ class Handler(SimpleHTTPRequestHandler):
             return
         try:
             n = int(self.headers.get("Content-Length") or 0)
-            cap = IMG_MAX * 4 // 3 + 1000 if fn is upload else 8000  # only a picture may be large
+            cap = IMG_MAX * 4 // 3 + 1000 if fn is upload else 8000  # only an attached file may be large
             if n > cap:  # don't read it; drop the connection after answering
                 self.close_connection = True
                 code, out = 413, {"error": "too-big"}
@@ -1003,7 +1060,7 @@ class Handler(SimpleHTTPRequestHandler):
         pass
 
 
-POSTS = {"/api/answer": answer, "/api/request": make_request, "/api/reopen": reopen, "/api/idea": add_idea,
+POSTS = {"/api/answer": answer, "/api/request": make_request, "/api/reopen": reopen, "/api/request-hide": hide_request, "/api/idea": add_idea,
          "/api/idea-include": include_idea, "/api/build": start_build, "/api/build-cancel": cancel_build,
          "/api/upload": upload}
 

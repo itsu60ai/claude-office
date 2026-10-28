@@ -252,7 +252,7 @@ html[data-theme=glass] .bubble,html[data-theme=glass] #tourCard{background:rgba(
 html[data-theme=glass] #fbDlg{border:1px solid rgba(255,255,255,.2);border-radius:24px}
 html[data-theme=glass] #fbDlg .qc{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.15);border-radius:16px}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:1rem;line-height:1.45}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:1rem;line-height:1.45;overflow-wrap:break-word}
 button,a{font:inherit}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 
@@ -344,6 +344,13 @@ ol.queue li{margin:4px 0}
 .whyBox .lab{margin:0 0 2px} .whyBox .sub{margin:0;font-size:0.9375rem}
 .pick{font-size:0.9375rem;margin:0 0 12px;padding:8px 12px;border-radius:8px;background:var(--ok-bg);border:1px solid var(--ok-line)}
 .pick b{color:var(--ok-ink)}
+ol.steps{list-style:none;margin:0 0 12px;padding:0;counter-reset:st}
+ol.steps li{counter-increment:st;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 0;border-top:1px solid var(--line)}
+ol.steps li:first-child{border-top:0}
+ol.steps li::before{content:counter(st);flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:0.875rem;border:2px solid currentColor;box-sizing:border-box}
+ol.steps li.done::before{content:'✓';color:var(--ok-ink)}
+ol.steps .txt{flex:1 1 220px;margin:0;font-size:0.9375rem}
+ol.steps li.done .txt{color:var(--muted)}
 .btn.no{background:var(--card);color:var(--ink);border-color:var(--line-strong);box-shadow:0 3px 0 var(--line-strong)}
 .btn.no:hover{background:var(--hover-warm)}
 .btn.yes,.btn.no{min-width:84px}
@@ -358,7 +365,25 @@ ol.queue li{margin:4px 0}
 /* ask: one box in, a visible route, then the request's real state */
 .ask textarea{width:100%;min-height:84px;resize:vertical;border:2px solid var(--line-strong);border-radius:8px;padding:10px 12px;
   font:inherit;background:var(--card);color:var(--ink)}
+.askHead{margin:0}
+.askHead button{display:flex;width:100%;align-items:center;justify-content:space-between;gap:8px;min-height:44px;padding:0;
+  background:none;border:0;font:inherit;font-weight:700;color:inherit;text-align:start;cursor:pointer}
+.askHead .chev::before{content:'▾';display:inline-block;font-size:1.25rem;line-height:1;transition:transform .15s}
+html[dir=rtl] .askHead [aria-expanded=false] .chev::before{transform:rotate(90deg)}
+html[dir=ltr] .askHead [aria-expanded=false] .chev::before{transform:rotate(-90deg)}
+@media (prefers-reduced-motion:reduce){ .askHead .chev::before{transition:none} }
+#askBody .hint{margin:2px 0 10px}
+.askBar{margin:10px 0 4px}
+.askBar #askSend{margin-inline-start:auto}
+#routeWhy{margin:2px 0 0;font-size:0.8125rem}
+#askMore{display:block}
+.projPick{display:inline-flex;align-items:center;gap:6px;min-width:0;max-width:100%}
+.projPick select{min-width:0}
+@media (max-width:560px){ .askBar #askSend{width:100%;margin-inline-start:0} }
 .pics{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;margin:8px 0 0}
+.pic.file{width:auto;max-width:min(260px,100%);height:44px;display:flex;align-items:center;gap:6px;padding-inline:10px 34px;font-size:0.8125rem}
+.pic.file bdi{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pic.file button{top:9px}
 .pics .note{margin:0}
 .pic{position:relative;width:64px;height:64px;border:2px solid var(--line-strong);border-radius:8px;overflow:hidden;background:var(--card)}
 .pic img{width:100%;height:100%;object-fit:cover;display:block}
@@ -369,6 +394,7 @@ ol.queue li{margin:4px 0}
 .route .lab{margin:0}
 .route select{font:inherit;font-size:0.875rem;min-height:40px;max-width:100%;border:2px solid var(--line-strong);border-radius:8px;background:var(--card);color:var(--ink);padding:4px 8px}
 .route select:disabled{opacity:.6}
+@media (pointer:coarse){ .route select,.textBtn,.btn.sm,.btn2.sm{min-height:44px} }
 .route .note{margin:0}
 .reqs .lab{margin:14px 0 0}
 .req{padding:10px 0;border-top:1px solid var(--line)}
@@ -411,8 +437,8 @@ footer{max-width:1100px;margin:0 auto;padding:4px 16px 28px;font-size:0.8125rem;
 #tourCard .why{background:var(--soft);border-radius:6px;padding:8px 10px;font-size:0.875rem}
 #tourCard .row{margin-top:12px}
 #tourCard .skip{margin-inline-start:auto}
-html[dir=rtl] [data-bidi]{text-align:right}
-html[dir=ltr] [data-bidi]{text-align:left}
+html[dir=rtl] [data-bidi], html[dir=rtl] [data-bidi-in]{text-align:right}
+html[dir=ltr] [data-bidi], html[dir=ltr] [data-bidi-in]{text-align:left}
 [dir=rtl] .stat small,[dir=rtl] .needs .kicker,[dir=rtl] #tourCard .step{letter-spacing:0}
 /* feedback: three questions, then WhatsApp opens with the message ready */
 #fbDlg{--fbfs:1.0625rem;font-size:var(--fbfs);border:0;border-radius:16px;padding:1.3em 1.3em 1.1em;width:min(32em,calc(100% - 32px));background:var(--panel);color:var(--ink);box-shadow:var(--shadow-modal);line-height:1.5}
@@ -471,28 +497,27 @@ html[dir=ltr] [data-bidi]{text-align:left}
 
 <main>
   <section class="panel ask" id="askPanel">
-    <h2 data-t="askTitle"></h2>
+    <h2 class="askHead"><button type="button" id="askToggle" aria-expanded="true" aria-controls="askBody">
+      <span data-t="askTitle"></span><span class="chev" aria-hidden="true"></span></button></h2>
+    <div id="askBody">
     <p class="hint" data-t="askHint"></p>
     <label class="sr" for="askText" data-t="askLabel"></label>
-    <textarea id="askText" dir="auto" maxlength="2000" data-tp="askPh"></textarea>
-    <div class="pics" id="askPics">
-      <button class="btn2 sm" id="askAddPic" type="button" data-t="addPic"></button>
-      <span class="note" id="picHint"></span>
-      <input type="file" id="askFile" accept="image/png,image/jpeg,image/gif,image/webp" multiple hidden>
-    </div>
-    <div class="route" id="askRoute">
-      <span class="lab" data-t="goesTo"></span>
-      <label class="sr" for="askProject" data-t="srProject"></label><select id="askProject"></select>
-      <label class="sr" for="askTarget" data-t="srTarget"></label><select id="askTarget"></select>
-      <span class="note" id="routeWhy" data-bidi></span>
-    </div>
-    <div class="row">
+    <textarea id="askText" data-bidi-in maxlength="2000" data-tp="askPh"></textarea>
+    <div class="pics" id="askPics" hidden></div>
+    <input type="file" id="askFile" multiple hidden>
+    <div class="route askBar">
+      <button class="btn2" id="askAddPic" type="button" data-t="addPic"></button>
+      <span class="projPick"><label class="lab" for="askProject" data-t="projLab"></label><select id="askProject"></select></span>
       <button class="btn" id="askSend" type="button" data-t="askSend"></button>
-      <button class="btn2" id="askIdea" type="button" data-t="askIdea"></button>
+    </div>
+    <p class="note" id="routeWhy" data-bidi hidden></p>
+    <button class="textBtn" id="askMore" type="button" aria-expanded="false" aria-controls="askRoute" hidden></button>
+    <div class="route" id="askRoute" hidden>
+      <label class="lab" for="askTarget" data-t="srTarget"></label><select id="askTarget"></select>
     </div>
     <p class="saved" id="askSaved" role="status" hidden></p>
-    <p class="note" id="askNote" data-t="askNote"></p>
     <div class="reqs" id="reqList"></div>
+    </div>
   </section>
 
   <section class="panel" id="officePanel">
@@ -525,6 +550,7 @@ html[dir=ltr] [data-bidi]{text-align:left}
       <p class="sub" id="nowWhy2" data-bidi></p>
     </div>
     <p class="pick" id="nowPick" hidden></p>
+    <ol class="steps" id="nowSteps" hidden></ol>
     <div class="row" id="nowActions" hidden>
       <span class="row" id="quickBtns">
         <button class="btn yes" id="aYes" type="button" data-t="yes"></button>
@@ -558,7 +584,7 @@ html[dir=ltr] [data-bidi]{text-align:left}
     <form class="ideaAdd" id="ideaForm">
       <label class="lab" for="ideaText" data-t="ideaLabel"></label>
       <div class="row">
-        <input id="ideaText" type="text" dir="auto" maxlength="500" data-tp="ideaPh" autocomplete="off">
+        <input id="ideaText" type="text" data-bidi-in maxlength="500" data-tp="ideaPh" autocomplete="off">
         <button class="btn2" id="ideaSave" type="submit" data-t="ideaSave"></button>
       </div>
     </form>
@@ -643,18 +669,19 @@ he: {
   liveLost:'החיבור לשרת של המשרד נפל', livePrivacy:'התצוגה מושהית בגלל פרטיות',
 
   askTitle:'לבקש מקלוד',
-  askHint:'כותבים כמו שמדברים: משימה חדשה, המשך למשהו קיים או תשובה לשאלה. הדף מנחש לאן זה שייך, פותח שיחה בקלוד עם הטקסט מוכן, ונשאר רק ללחוץ שלח.',
+  askHint:'כותבים מה צריך ולוחצים על הכפתור. נפתחת שיחה בקלוד עם הטקסט מוכן, ושום דבר לא רץ עד שלוחצים שם שלח.',
   askLabel:'מה צריך?', askPh:'למשל: תכתוב לי פוסט קצר לאינסטגרם על המבצע של השבוע',
-  addPic:'הוספת תמונה', picHint: k => `אפשר גם להדביק (${k}) או לגרור לתיבה`,
-  goesTo:'יישלח אל:', srProject:'פרויקט', srTarget:'שיחה',
-  askSend:'פתיחת שיחה בקלוד', askIdea:'שמירה כרעיון לגרסה הבאה', askNote:'שום דבר לא רץ עד שלוחצים שלח בתוך קלוד.',
-  routeGuess: m => `ניחוש לפי "${m}"`, routeNone:'אין רמז ברור, אז לתיקייה הכללית', routeMine:'בחירה שלך',
+  addPic:'📎 לצרף קובץ', picHint: k => `אפשר גם להדביק (${k}) או לגרור לתיבה`,
+  goesTo:'יישלח אל:', srProject:'פרויקט', srTarget:'לאיזו שיחה:', projLab:'פרויקט:',
+  askSend:'פתיחת שיחה בקלוד', askMore:'או להמשיך שיחה שכבר פתוחה', askLess:'ביטול, לפתוח שיחה חדשה',
+  routeGuess: m => `נבחר לפי המילה "${m}". אפשר לשנות.`, routeNone:'קלוד יבין לבד מהטקסט לאיזה פרויקט זה שייך.',
   routeItem:'הולך לשיחה שאחראית על השאלה הזו', routeSame:'חוזר לאותה שיחה, עם כל מה שהיא כבר יודעת',
-  routeNewProj:'. קלוד בודק קודם אם יש כבר פרויקט כזה, ופותח חדש רק אחרי אישור שלך',
+  routeNewProj:'קלוד בודק קודם אם יש כבר פרויקט כזה, ופותח חדש רק אחרי אישור שלך.',
   newProject:'פרויקט חדש', tNew:'שיחה חדשה', tFollow:'המשך: ', tAnswer:'תשובה: ', tFollowReq:'המשך: השיחה של הבקשה הזו',
   reqTitle:'הבקשות שלך',
-  'req.send':'מחכה ללחיצה על שלח', 'req.unsent':'לא נשלחה', 'req.working':'בעבודה', 'req.needs-you':'מחכה לך', 'req.result':'יש תשובה',
-  sameChat:' · באותה שיחה', openChat:'פתיחת השיחה', openAgain:'לפתוח שוב', follow:'המשך',
+  'req.send':'נשאר ללחוץ שלח', 'req.unsent':'לא נשלחה', 'req.working':'בעבודה', 'req.needs-you':'מחכה לך', 'req.result':'יש תשובה',
+  sameChat:' · באותה שיחה', openChat:'פתיחת השיחה', openAgain:'לפתוח מחדש בקלוד', follow:'המשך', hideReq:'הסרה מהרשימה',
+  hideAsk:'להסיר את הבקשה מהרשימה? השיחה בקלוד לא נמחקת.', errHide:'לא הצלחתי להסיר. כדאי לנסות שוב.',
   carryCopied: k => `הועתק. בשיחה שנפתחה מדביקים (${k}) ולוחצים שלח.`,
   carryManual:'השיחה נפתחה. מעתיקים את הטקסט מהתיבה, מדביקים שם ולוחצים שלח.',
   carryNew:'נפתחה שיחה חדשה עם הטקסט מוכן. לוחצים שם שלח. עד אז שום דבר לא רץ.',
@@ -665,9 +692,10 @@ he: {
   ideaPics:'תמונות הולכות עם בקשה, לא עם רעיון. אפשר ללחוץ "פתיחת שיחה בקלוד" או להסיר את התמונה.',
   ideaFail:'לא הצלחתי לשמור את הרעיון. אפשר לנסות שוב עוד רגע.', ideaDup:'הרעיון הזה כבר ברשימה.',
   ideaSaved:'נשמר ברשימת הרעיונות לגרסה הבאה. לא נבנה כלום.',
-  picLimit: n => `עד ${n} תמונות בבקשה אחת.`, picType:'זה לא קובץ תמונה (PNG, JPG, GIF או WebP).',
-  picBig:'התמונה גדולה מדי (עד 8MB).', picAdded:'התמונה נוספה. היא תצורף לבקשה כשתיפתח השיחה.',
-  picFail:'לא הצלחתי להוסיף את התמונה. אפשר לנסות שוב.', picAlt: n => `תמונה ${n}`, picRemove: n => `הסרת תמונה ${n}`,
+  picLimit: n => `עד ${n} קבצים בבקשה אחת.`, picEmpty:'הקובץ הזה ריק.',
+  picBig:'הקובץ גדול מדי (עד 20MB).', picAdded:'הקובץ צורף. הוא יגיע לקלוד יחד עם הבקשה.',
+  picFail:'לא הצלחתי לצרף את הקובץ. אפשר לנסות שוב.', picAlt: n => `קובץ ${n}`, picRemove: n => `הסרת קובץ ${n}`,
+  askOpen:'פתיחת החלק של הבקשות', askClose:'סגירת החלק של הבקשות',
 
   officeTitle:'מי עובד על מה',
   officeHint:'כל שולחן הוא שיחה עם קלוד מ-24 השעות האחרונות. לוחצים על שולחן כדי לראות מה היא עושה עכשיו.',
@@ -685,7 +713,10 @@ he: {
   hideUntil:'להסתיר עד:', d1:'מחר', d3:'בעוד 3 ימים', d7:'בשבוע הבא',
   noteQuick:'לחיצה רק שומרת את התשובה ברשימת המשימות שלך. שום דבר לא נשלח, לא משולם ולא מתפרסם.',
   noteChat:'פותח את השיחה שכבר עובדת על זה.', noteNew:'פותח שיחה חדשה עם השאלה מוכנה. שום דבר לא נשלח עד שלוחצים שלח.',
-  noteLater:' "אחר כך" רק מסתיר את זה.', skip:'לדלג בינתיים (לא שומר כלום)',
+  noteLater:' "אחר כך" רק מסתיר את זה.',
+  noteSteps:'כל כפתור עושה שלב אחד. שום דבר לא נשלח עד שלוחצים שלח בשיחה.',
+  stepCopied:k => `הועתק. מדביקים עם ${k} איפה שצריך.`, stepNoCopy:'לא הצלחתי להעתיק. מסמנים את הטקסט ומעתיקים ידנית.',
+  stepFilled:'הבקשה מוכנה בתיבה. לוחצים "פתיחת שיחה בקלוד", ואז שלח בשיחה.', skip:'לדלג בינתיים (לא שומר כלום)', skip:'לדלג בינתיים (לא שומר כלום)',
   hideList:'להסתיר את הרשימה', showList: (top, n) => `לראות את ${top} הבאים (${n} בסך הכל)`,
   tagMain:'ראשי', tagMoney:'כסף', more: n => `ועוד ${n} ברשימת המשימות שלך`,
   saidYes:'נשמר: כן.', saidNo:'נשמר: לא.', saidLater: d => `מוסתר עד ${d}.`,
@@ -718,7 +749,7 @@ he: {
   't1.body':'כאן רואים כמה שיחות עובדות עכשיו, כמה דברים מחכים לך, ומתי הדף התעדכן בפעם האחרונה.',
   't1.why':'כדי לדעת איפה הכל עומד בלי לפתוח עשר שיחות.',
   't2.title':'בקשה אחת, מקום אחד',
-  't2.body':'כותבים מה צריך, כמו שמדברים. הדף מנחש לאיזה פרויקט זה שייך ומראה למה, ואפשר לשנות לפני ששולחים. המשך למשהו קיים חוזר לאותה שיחה, ומשימה חדשה נפתחת בשיחה חדשה בתיקייה הנכונה. אפשר לצרף תמונות.',
+  't2.body':'כותבים מה צריך, כמו שמדברים, ואפשר לצרף כל קובץ. קלוד מבין לבד לאיזה פרויקט זה שייך, ואם יש מילה מוכרת הדף כבר בוחר אותו. אפשר גם להמשיך שיחה שכבר פתוחה. לחיצה על הכותרת סוגרת ופותחת את החלק הזה.',
   't2.why':'דלת אחת לכל הבקשות. הדף רק שומר את הטקסט ופותח את השיחה. שום דבר לא רץ עד שלוחצים שלח בקלוד.',
   't3.title':'שולחן לכל שיחה',
   't3.body':'כל שיחה עם קלוד מ-24 השעות האחרונות מקבלת שולחן. ידיים שמקלידות: היא עובדת. zzz: היא בהפסקה. שלט מעל השולחן: היא נעצרה, או שסיימה והתור שלך.',
@@ -745,7 +776,7 @@ he: {
   's.tool.edit-file':'כותבת בקובץ', 's.tool.write-file':'כותבת קובץ', 's.tool.run':'מריצה פקודה',
   's.tool.search-web':'מחפשת ברשת', 's.tool.read-web':'קוראת דף ברשת', 's.tool.helper':'שלחה עוזר',
   's.tool.helpers':'מפעילה כמה עוזרים', 's.tool.browser':'עובדת בדפדפן', 's.tool.tool':'משתמשת בכלי', 's.tool.working':'עובדת',
-  's.req-send':'מחכה ללחיצה על שלח בשיחה', 's.req-unsent':'לא נשלחה. אפשר לפתוח שוב', 's.req-question':'בשיחה מחכה לך שאלה',
+  's.req-send':'השיחה נפתחה בקלוד עם הטקסט. נשאר ללחוץ שם שלח.', 's.req-unsent':'לא נשלחה. אם השיחה נסגרה, אפשר לפתוח אותה מחדש.', 's.req-question':'בשיחה מחכה לך שאלה',
   's.req-result':'יש תשובה', 's.in-chat':'התשובה מחכה בשיחה', 's.hidden':'(הטקסט מוסתר כאן, הוא שמור)',
   's.idea-hidden':'(רעיון שמור)', 's.existing':'שיחה קיימת',
   's.build-cancelled':'בוטלה. הדף החי לא השתנה', 's.build-ready':'מוכנה בעותק הנפרד. מחכה לאישור שלך להחלפה',
@@ -762,18 +793,19 @@ en: {
   liveLost:'Lost the connection to the office server', livePrivacy:'View paused for privacy',
 
   askTitle:'Ask Claude',
-  askHint:'Write it the way you\'d say it: a new job, a follow-up, or an answer to a question. The page guesses where it belongs, opens a Claude chat with your text ready, and you just press Send.',
+  askHint:'Write what you need and press the button. A Claude chat opens with your text ready, and nothing runs until you press Send there.',
   askLabel:'What do you need?', askPh:'For example: write a short Instagram post about this week\'s sale',
-  addPic:'Add a picture', picHint: k => `or paste one (${k}), or drag it into the box`,
-  goesTo:'Goes to:', srProject:'Project', srTarget:'Chat',
-  askSend:'Open in Claude', askIdea:'Save as an idea for the next version', askNote:'Nothing runs until you press Send inside Claude.',
-  routeGuess: m => `Guessed from "${m}"`, routeNone:'No clear hint, so the general folder', routeMine:'Your pick',
+  addPic:'📎 Attach a file', picHint: k => `You can also paste (${k}) or drag it into the box`,
+  goesTo:'Goes to:', srProject:'Project', srTarget:'Which chat:', projLab:'Project:',
+  askSend:'Open in Claude', askMore:'Or continue a chat that\'s already open', askLess:'Cancel, open a new chat',
+  routeGuess: m => `Picked from the word "${m}". You can change it.`, routeNone:'Claude works out from your text which project it belongs to.',
   routeItem:'Goes to the chat that owns this question', routeSame:'Goes back to the same chat, with everything it already knows',
-  routeNewProj:'. Claude first checks whether one already exists, and opens a new one only after your OK',
+  routeNewProj:'Claude first checks whether one already exists, and opens a new one only after your OK.',
   newProject:'New project', tNew:'New chat', tFollow:'Follow up: ', tAnswer:'Answer: ', tFollowReq:'Follow up: that request\'s chat',
   reqTitle:'Your requests',
-  'req.send':'Waiting for Send', 'req.unsent':'Not sent', 'req.working':'Working', 'req.needs-you':'Waiting on you', 'req.result':'Answer ready',
-  sameChat:' · same chat', openChat:'Open the chat', openAgain:'Open again', follow:'Follow up',
+  'req.send':'Press Send in Claude', 'req.unsent':'Not sent', 'req.working':'Working', 'req.needs-you':'Waiting on you', 'req.result':'Answer ready',
+  sameChat:' · same chat', openChat:'Open the chat', openAgain:'Open it again in Claude', follow:'Follow up', hideReq:'Remove from list',
+  hideAsk:'Remove this request from the list? The chat in Claude is not deleted.', errHide:'Could not remove it. Try again.',
   carryCopied: k => `Copied. In the chat that opened, paste (${k}) and press Send.`,
   carryManual:'The chat is open. Copy your text from the box, paste it there and press Send.',
   carryNew:'A new chat opened with your text ready. Press Send there. Until then, nothing runs.',
@@ -784,9 +816,10 @@ en: {
   ideaPics:'Pictures go with a request, not an idea. Press "Open in Claude", or remove the picture.',
   ideaFail:'Couldn\'t save the idea. Try again in a moment.', ideaDup:'That idea is already on the list.',
   ideaSaved:'Saved to the ideas for the next version. Nothing was built.',
-  picLimit: n => `Up to ${n} pictures per request.`, picType:'That isn\'t a picture file (PNG, JPG, GIF or WebP).',
-  picBig:'That picture is too big (up to 8 MB).', picAdded:'Picture added. It goes along with the request when the chat opens.',
-  picFail:'Couldn\'t add that picture. Try again.', picAlt: n => `Picture ${n}`, picRemove: n => `Remove picture ${n}`,
+  picLimit: n => `Up to ${n} files per request.`, picEmpty:'That file is empty.',
+  picBig:'That file is too big (up to 20 MB).', picAdded:'File attached. It goes to Claude along with the request.',
+  picFail:'Couldn\'t attach that file. Try again.', picAlt: n => `File ${n}`, picRemove: n => `Remove file ${n}`,
+  askOpen:'Open the requests part', askClose:'Close the requests part',
 
   officeTitle:'Who\'s working on what',
   officeHint:'Every desk is a Claude chat from the last 24 hours. Click a desk to see what it\'s doing right now.',
@@ -804,7 +837,10 @@ en: {
   hideUntil:'Hide it until:', d1:'Tomorrow', d3:'In 3 days', d7:'Next week',
   noteQuick:'A tap only saves your answer to your task list. Nothing is sent, paid or published.',
   noteChat:'Opens the chat that is already working on this.', noteNew:'Opens a new chat with the question ready. Nothing is sent until you press Send.',
-  noteLater:' "Later" just hides it.', skip:'Skip for now (saves nothing)',
+  noteLater:' "Later" just hides it.',
+  noteSteps:'Each button does one step. Nothing is sent until you press Send in the chat.',
+  stepCopied:k => `Copied. Paste with ${k} where it goes.`, stepNoCopy:'Could not copy. Select the text and copy it by hand.',
+  stepFilled:'Your request is ready in the box. Press "Open in Claude", then Send in the chat.', skip:'Skip for now (saves nothing)', skip:'Skip for now (saves nothing)',
   hideList:'Hide the list', showList: (top, n) => `See the next ${top} (${n} in total)`,
   tagMain:'main', tagMoney:'money', more: n => `and ${n} more in your task list`,
   saidYes:'Saved: Yes.', saidNo:'Saved: No.', saidLater: d => `Hidden until ${d}.`,
@@ -837,7 +873,7 @@ en: {
   't1.body':'How many chats are working right now, how many things are waiting on you, and when the page last updated.',
   't1.why':'So you know where everything stands without opening ten chats.',
   't2.title':'One place to ask',
-  't2.body':'Write what you need, the way you\'d say it. The page guesses which project it belongs to and shows why, and you can change it before sending. A follow-up goes back to the same chat, and a new job opens a new chat in the right folder. You can add pictures too.',
+  't2.body':'Write what you need, the way you\'d say it, and attach any file. Claude works out which project it belongs to, and if there\'s a word the page knows, it picks it for you. You can also continue a chat that\'s already open. Clicking the title closes and opens this part.',
   't2.why':'One door for every request. The page only saves your text and opens the chat. Nothing runs until you press Send in Claude.',
   't3.title':'A desk for every chat',
   't3.body':'Every Claude chat from the last 24 hours gets a desk. Typing hands: it\'s working. Zzz: it\'s on a break. A sign above the desk: it stopped, or it finished and it\'s your turn.',
@@ -863,7 +899,7 @@ en: {
   's.tool.edit-file':'Editing a file', 's.tool.write-file':'Writing a file', 's.tool.run':'Running a command',
   's.tool.search-web':'Searching the web', 's.tool.read-web':'Reading a web page', 's.tool.helper':'Sent a helper',
   's.tool.helpers':'Running a few helpers', 's.tool.browser':'Working in the browser', 's.tool.tool':'Using a tool', 's.tool.working':'Working',
-  's.req-send':'Waiting for you to press Send in the chat', 's.req-unsent':'Not sent. You can open it again', 's.req-question':'A question is waiting for you in the chat',
+  's.req-send':'The chat opened in Claude with your text. Press Send there.', 's.req-unsent':'Not sent. If the chat was closed, you can open it again.', 's.req-question':'A question is waiting for you in the chat',
   's.req-result':'Answer ready', 's.in-chat':'The answer is waiting in the chat', 's.hidden':'(Text hidden here. It is saved.)',
   's.idea-hidden':'(saved idea)', 's.existing':'Existing chat',
   's.build-cancelled':'Cancelled. The live page did not change', 's.build-ready':'Ready in the separate copy. Waiting for your OK to switch',
@@ -1065,11 +1101,14 @@ function drawNow(){
   if (it.pick) $('nowPick').innerHTML = `<b>${esc(t('pick', t(it.pick === 'yes' ? 'yes' : 'no')))}</b> <span data-bidi>${esc(tx(it.pickWhy))}</span>`;
   $('quickBtns').hidden = !it.quick;
   $('aYes').classList.toggle('rec', it.pick === 'yes'); $('aNo').classList.toggle('rec', it.pick === 'no');
-  const go = $('nowGo');
+  drawSteps(it);
+  const st = (it.steps || []).length > 0, go = $('nowGo');
   go.hidden = it.quick;
   go.href = it.chat || it.newChat;
   go.textContent = it.chat ? t('goChat') : t('goNew');
-  $('nowNote').textContent = it.quick ? t('noteQuick') : (it.chat ? t('noteChat') : t('noteNew')) + t('noteLater');
+  go.className = st ? 'btn2' : 'btn'; // with steps, the steps are the main buttons
+  $('nowAnswer').hidden = st;
+  $('nowNote').textContent = it.quick ? t('noteQuick') : st ? t('noteSteps') : (it.chat ? t('noteChat') : t('noteNew')) + t('noteLater');
   $('queueBtn').textContent = open ? t('hideList') : t('showList', top, w.length);
   $('queueBtn').setAttribute('aria-expanded', String(open));
   $('queue').innerHTML = w.slice(0, top).map(x => `<li><span data-bidi>${esc(tx(x.name))}</span>${x.main?`<span class="tag">${esc(t('tagMain'))}</span>`:''}${x.money?`<span class="tag">${esc(t('tagMoney'))}</span>`:''}</li>`).join('')
@@ -1133,7 +1172,9 @@ function applyLang(){
   document.querySelectorAll('[data-t]').forEach(n => n.textContent = t(n.dataset.t));
   document.querySelectorAll('[data-tp]').forEach(n => n.placeholder = t(n.dataset.tp));
   document.querySelectorAll('[data-ta]').forEach(n => n.setAttribute('aria-label', t(n.dataset.ta)));
-  $('picHint').textContent = t('picHint', PASTE);
+  $('askAddPic').title = t('picHint', PASTE);
+  $('askToggle').title = t($('askToggle').getAttribute('aria-expanded') === 'true' ? 'askClose' : 'askOpen');
+  $('askMore').textContent = t($('askRoute').hidden ? 'askMore' : 'askLess');
   const lb = $('langBtn'); lb.textContent = t('langBtn'); lb.lang = lang === 'he' ? 'en' : 'he'; lb.setAttribute('aria-label', t('langAria'));
   $('brand').textContent = document.title = officeName();
   optsKey = '';
@@ -1177,7 +1218,11 @@ function fixBidi(){
     const d = bidiDir(n.textContent);
     if (n.dir !== d) n.dir = d;
   });
+  document.querySelectorAll('[data-bidi-in]').forEach(fixBidiIn);
 }
+// typing boxes: empty follows the page (so the hint text reads right in Hebrew), then the words decide
+function fixBidiIn(n){ const d = bidiDir(n.value || ''); if (n.dir !== d) n.dir = d; }
+document.addEventListener('input', e => { if (e.target.matches?.('[data-bidi-in]')) fixBidiIn(e.target); });
 new MutationObserver(fixBidi).observe(document.body, { childList: true, subtree: true, characterData: true });
 $('fbBtn').addEventListener('click', () => { fbFill(); $('fbDlg').showModal(); });
 $('fbForm').addEventListener('input', fbFill);
@@ -1210,6 +1255,7 @@ function tourTarget(st){ const a = $(st.el); return shown(a) ? a : $(st.alt || s
 function tourShow(i){
   if (tLit) tLit.classList.remove('spot');
   tIdx = i; const st = tSteps[i];
+  if (st.el === 'askPanel') showAsk(true);  // the step shows the box itself, so a closed one opens
   tLit = tourTarget(st); tLit.classList.add('spot');
   $('tStep').textContent = t('tStep', i + 1, tSteps.length);
   $('tTitle').textContent = t(st.k + '.title'); $('tBody').textContent = t(st.k + '.body'); $('tWhy').textContent = t(st.k + '.why');
@@ -1279,6 +1325,42 @@ async function tap(answer, days){
   btns.forEach(b => b.disabled = false); busy = false;
   await refresh();
 }
+/* steps: each line has one button that does the thing; nothing is sent until the user presses Send in the chat */
+let stepsKey = '';
+const stepNonces = {};
+function stepsDone(){ try { return JSON.parse(localStorage.getItem('officeStepsDone') || '{}'); } catch (e) { return {}; } }
+function markStep(k){ const d = stepsDone(); d[k] = 1; try { localStorage.setItem('officeStepsDone', JSON.stringify(d)); } catch (e) {} stepsKey = ''; drawNow(); }
+function drawSteps(it){
+  const s = it.steps || [], done = stepsDone();
+  $('nowSteps').hidden = !s.length;
+  const key = JSON.stringify([lang, it.id, s, s.map((_, i) => !!done[it.id + ':' + i])]);
+  if (key === stepsKey) return; // redraw only on change, so a focused button keeps its focus
+  stepsKey = key;
+  $('nowSteps').innerHTML = s.map((x, i) => `<li class="${done[it.id + ':' + i] ? 'done' : ''}">
+    <p class="txt" data-bidi>${esc(tx(x.text))}</p>
+    <button class="${done[it.id + ':' + i] ? 'btn2' : 'btn'} sm" type="button" data-step="${i}">${esc(tx(x.label))}</button></li>`).join('');
+  $('nowSteps').querySelectorAll('[data-step]').forEach(b => b.onclick = () => runStep(it, Number(b.dataset.step)));
+}
+function cardMsg(text, err){ const m = $('nowSaved'); m.textContent = text; m.classList.toggle('err', !!err); m.hidden = false; announce(text); }
+async function runStep(it, i){
+  const s = it.steps[i], say = tx(s.say), k = it.id + ':' + i;
+  if (s.do === 'copy') {
+    try { await navigator.clipboard.writeText(say); cardMsg(t('stepCopied', PASTE)); markStep(k); }
+    catch (e) { cardMsg(t('stepNoCopy'), true); }
+    return;
+  }
+  if (s.do === 'fill') {
+    setTarget('new');
+    if ([...$('askProject').options].some(o => o.value === it.pid)) { $('askProject').value = it.pid; projTouched = true; }
+    $('askText').value = say; fixBidiIn($('askText')); drawRoute(); askMsg(t('stepFilled')); markStep(k);
+    return;
+  }
+  stepNonces[k] = stepNonces[k] || newNonce(); // a second tap finds the same request instead of making a new one
+  const [ok, j] = await post('/api/request', {text: say, project: it.pid, nonce: stepNonces[k],
+    target: s.to === 'item' ? 'item:' + it.id : 'new'});
+  if (!ok) { cardMsg(aerr(j.error), true); return; }
+  if (await carry(j, cardMsg)) markStep(k);
+}
 $('aYes').addEventListener('click', () => tap('yes'));
 $('aNo').addEventListener('click', () => tap('no'));
 $('aLater').addEventListener('click', () => { const h = !$('laterRow').hidden; $('laterRow').hidden = h; $('aLater').setAttribute('aria-expanded', String(!h)); });
@@ -1302,13 +1384,33 @@ function guessProject(text){ // a visible guess, never final: it can be changed 
   return [def, t('routeNone')];
 }
 function drawRoute(){
-  const tgt = $('askTarget').value, ps = $('askProject');
+  const tgt = $('askTarget').value, ps = $('askProject'), why = $('routeWhy');
   const fixed = tgt !== 'new'; // a follow-up or an answer stays with its own chat and project
   ps.disabled = fixed;
-  if (fixed) { $('routeWhy').textContent = tgt.startsWith('item:') ? t('routeItem') : t('routeSame'); return; }
-  if (!projTouched) { const [id, why] = guessProject($('askText').value); if (id) ps.value = id; $('routeWhy').textContent = why; }
-  else $('routeWhy').textContent = t('routeMine');
-  if (ps.value === 'new-project') $('routeWhy').textContent += t('routeNewProj');
+  let w = '';
+  if (fixed) w = tgt.startsWith('item:') ? t('routeItem') : t('routeSame');
+  else {
+    const text = $('askText').value.trim();
+    if (!projTouched) { const [id, g] = guessProject(text); if (id) ps.value = id; if (text) w = g; }
+    if (ps.value === 'new-project') w = t('routeNewProj');
+    else if (ps.value === 'auto' && projTouched) w = t('routeNone');
+  }
+  why.textContent = w; why.hidden = !w;
+}
+function showRoute(open){ // "continue a chat" sits behind a small link; closing it means a new chat again
+  $('askRoute').hidden = !open;
+  $('askMore').setAttribute('aria-expanded', String(open));
+  $('askMore').textContent = t(open ? 'askLess' : 'askMore');
+  if (!open && $('askTarget').value !== 'new') { $('askTarget').value = 'new'; extraTargets = {}; optsKey = ''; drawAsk(); }
+}
+let askOpen = true;
+try { askOpen = localStorage.getItem('officeAskOpen') !== '0'; } catch (e) {}
+function showAsk(open){
+  askOpen = open;
+  $('askBody').hidden = !open;
+  $('askToggle').setAttribute('aria-expanded', String(open));
+  $('askToggle').title = t(open ? 'askClose' : 'askOpen');
+  try { localStorage.setItem('officeAskOpen', open ? '1' : '0'); } catch (e) {}
 }
 function reqProject(r){
   const p = (data?.projects || []).find(x => x.id === r.pid);
@@ -1328,6 +1430,7 @@ function drawAsk(){
     if (pv && projs.some(p => p.id === pv)) ps.value = pv;
     ts.value = [...ts.options].some(o => o.value === tv) ? tv : 'new';
   }
+  $('askMore').hidden = ts.options.length < 2 && $('askRoute').hidden; // nothing to continue: no link
   drawRoute();
   const rq = data?.requests || [];
   $('reqList').innerHTML = !rq.length ? '' : `<p class="lab">${esc(t('reqTitle'))}</p>` + rq.map(r => `<div class="req">
@@ -1337,30 +1440,39 @@ function drawAsk(){
     ${r.reply || r.replyKey ? `<p class="rep" data-bidi>${esc(L(r, 'reply'))}</p>` : `<p class="note" data-bidi>${esc(L(r, 'line'))}</p>`}
     <div class="row">${r.chat ? `<a class="btn2 sm" href="${esc(r.chat)}">${esc(t('openChat'))}</a>` : ''}
       ${r.state === 'send' || r.state === 'unsent' ? `<button class="btn2 sm" type="button" data-reopen="${esc(r.id)}">${esc(t('openAgain'))}</button>` : ''}
-      ${r.local ? `<button class="textBtn" type="button" data-follow="${esc(r.local)}">${esc(t('follow'))}</button>` : ''}</div>
+      ${r.local ? `<button class="textBtn" type="button" data-follow="${esc(r.local)}">${esc(t('follow'))}</button>` : ''}
+      <button class="textBtn" type="button" data-hide="${esc(r.id)}">${esc(t('hideReq'))}</button></div>
   </div>`).join('');
   $('reqList').querySelectorAll('[data-reopen]').forEach(b => b.onclick = () => reopenReq(b.dataset.reopen));
   $('reqList').querySelectorAll('[data-follow]').forEach(b => b.onclick = () => followUp(b.dataset.follow));
+  $('reqList').querySelectorAll('[data-hide]').forEach(b => b.onclick = () => hideReq(b.dataset.hide));
+}
+async function hideReq(id){
+  if (!confirm(t('hideAsk'))) return;
+  const [ok] = await post('/api/request-hide', {id});
+  if (!ok) { askMsg(t('errHide'), true); return; }
+  await refresh();
 }
 function setTarget(v, label){
   if (![...$('askTarget').options].some(o => o.value === v)) { extraTargets = {[v]: label}; optsKey = ''; drawAsk(); }
-  $('askTarget').value = v; drawRoute();
+  if (!askOpen) showAsk(true);
+  $('askTarget').value = v; $('askMore').hidden = false; showRoute(true); drawRoute();
   $('askPanel').scrollIntoView({block:'start', behavior: matchMedia('(prefers-reduced-motion:reduce)').matches ? 'auto' : 'smooth'});
   $('askText').focus();
 }
 function followUp(local){ setTarget(local, () => t('tFollowReq')); }
 function askMsg(text, err){ const m = $('askSaved'); m.textContent = text; m.classList.toggle('err', !!err); m.hidden = false; announce(text); }
-async function carry(j){ // new chat: the text is already in it. Existing chat: copy, then open it
+async function carry(j, msg = askMsg){ // new chat: the text is already in it. Existing chat: copy, then open it
   if (j.mode === 'continue') {
     let copied = false;
     try { await navigator.clipboard.writeText(j.copy); copied = true; } catch (e) {}
     location.href = j.link;
-    askMsg(copied ? t('carryCopied', PASTE) : t('carryManual'));
-    if (!copied) { $('askText').value = j.copy; $('askText').select(); }
+    msg(copied ? t('carryCopied', PASTE) : t('carryManual'));
+    if (!copied) { $('askText').value = j.copy; fixBidiIn($('askText')); $('askText').select(); }
     return copied;
   }
   location.href = j.link;
-  askMsg(t('carryNew'));
+  msg(t('carryNew'));
   return true;
 }
 const aerr = e => STR[lang]['err.' + e] ? t('err.' + e) : t('errSave');
@@ -1368,15 +1480,15 @@ $('askSend').addEventListener('click', async () => {
   const text = $('askText').value.trim();
   if (askBusy) return;
   if (!text) { askMsg(t('err.bad-text'), true); return; }
-  askBusy = true; $('askSend').disabled = $('askIdea').disabled = true;
+  askBusy = true; $('askSend').disabled = true;
   try {
     const [ok, j] = await post('/api/request', {text, project: $('askProject').value, target: $('askTarget').value, nonce: askNonce,
       images: askPics.map(p => p.name)});
     if (!ok) throw new Error(aerr(j.error));
     if (await carry(j)) { $('askText').value = ''; clearPics(); }
-    askNonce = newNonce(); projTouched = false; extraTargets = {}; optsKey = '';
+    askNonce = newNonce(); projTouched = false; showRoute(false); extraTargets = {}; optsKey = '';
   } catch (e) { askMsg(e.message, true); }
-  askBusy = false; $('askSend').disabled = $('askIdea').disabled = false;
+  askBusy = false; $('askSend').disabled = false;
   await refresh();
 });
 async function reopenReq(id){
@@ -1384,38 +1496,25 @@ async function reopenReq(id){
   if (!ok) { askMsg(t('errReopen'), true); return; }
   await carry(j);
 }
-$('askIdea').addEventListener('click', async () => {
-  const text = $('askText').value.trim();
-  if (askBusy) return;
-  if (!text || text.length > 500) { askMsg(t('ideaLen'), true); return; }
-  if (askPics.length) { askMsg(t('ideaPics'), true); return; }
-  askBusy = true; $('askSend').disabled = $('askIdea').disabled = true;
-  try {
-    const [ok, j] = await post('/api/idea', {text, nonce: askNonce});
-    if (!ok) throw new Error(t('ideaFail'));
-    if (!j.duplicate) await post('/api/idea-include', {id: j.idea, include: true});
-    askMsg(j.duplicate ? t('ideaDup') : t('ideaSaved'));
-    $('askText').value = ''; askNonce = newNonce();
-  } catch (e) { askMsg(e.message, true); }
-  askBusy = false; $('askSend').disabled = $('askIdea').disabled = false;
-  await refresh();
-});
 
-/* pictures: saved on this computer when added; the request tells Claude where each one is */
-const PIC_TYPES = ['image/png', 'image/jpeg', 'image/gif', 'image/webp'], PIC_MAX = 8 * 1024 * 1024, PIC_LIMIT = 4;
+/* attached files: saved on this computer when added; the request tells Claude where each one is.
+   A picture shows a thumbnail, any other file shows its name */
+const PIC_TYPES = ['image/png', 'image/jpeg', 'image/gif', 'image/webp'], PIC_MAX = 20 * 1024 * 1024, PIC_LIMIT = 6;
 let askPics = [];
 function drawPics(){
   const box = $('askPics');
-  box.querySelectorAll('.pic').forEach(n => n.remove());
+  box.textContent = '';
   askPics.forEach((p, i) => {
     const d = document.createElement('div');
-    d.className = 'pic';
-    d.innerHTML = `<img alt="${esc(t('picAlt', i + 1))}" src="${p.url}"><button type="button" aria-label="${esc(t('picRemove', i + 1))}">×</button>`;
-    d.querySelector('button').onclick = () => { URL.revokeObjectURL(p.url); askPics.splice(i, 1); drawPics(); };
-    box.insertBefore(d, $('askAddPic'));
+    d.className = p.url ? 'pic' : 'pic file';
+    d.innerHTML = (p.url ? `<img alt="${esc(t('picAlt', i + 1))}" src="${p.url}">` : `<span aria-hidden="true">📄</span><bdi>${esc(p.label)}</bdi>`)
+      + `<button type="button" aria-label="${esc(t('picRemove', i + 1))}">×</button>`;
+    d.querySelector('button').onclick = () => { if (p.url) URL.revokeObjectURL(p.url); askPics.splice(i, 1); drawPics(); $('askAddPic').focus(); };
+    box.append(d);
   });
+  box.hidden = !askPics.length;
 }
-function clearPics(){ askPics.forEach(p => URL.revokeObjectURL(p.url)); askPics = []; drawPics(); }
+function clearPics(){ askPics.forEach(p => p.url && URL.revokeObjectURL(p.url)); askPics = []; drawPics(); }
 const toBase64 = f => new Promise((ok, bad) => {
   const r = new FileReader();
   r.onload = () => ok(String(r.result).split(',')[1] || '');
@@ -1425,21 +1524,22 @@ const toBase64 = f => new Promise((ok, bad) => {
 async function addPics(files){
   for (const f of files) {
     if (askPics.length >= PIC_LIMIT) { askMsg(t('picLimit', PIC_LIMIT), true); break; }
-    if (!PIC_TYPES.includes(f.type)) { askMsg(t('picType'), true); continue; }
+    if (!f.size) { askMsg(t('picEmpty'), true); continue; }
     if (f.size > PIC_MAX) { askMsg(t('picBig'), true); continue; }
     try {
-      const [ok, j] = await post('/api/upload', {data: await toBase64(f)});
-      if (!ok) throw new Error();
-      if (!askPics.some(p => p.name === j.image)) askPics.push({name: j.image, url: URL.createObjectURL(f)});
+      const [ok, j] = await post('/api/upload', {data: await toBase64(f), name: f.name || ''});
+      if (!ok) throw new Error(j?.error === 'too-big' ? t('picBig') : t('picFail'));
+      const pic = j.image.startsWith('IMG-') && PIC_TYPES.includes(f.type);
+      if (!askPics.some(p => p.name === j.image)) askPics.push({name: j.image, url: pic ? URL.createObjectURL(f) : null, label: f.name || j.image});
       drawPics();
       askMsg(t('picAdded'));
-    } catch (e) { askMsg(t('picFail'), true); }
+    } catch (e) { askMsg(e.message || t('picFail'), true); }
   }
 }
 $('askAddPic').addEventListener('click', () => $('askFile').click());
 $('askFile').addEventListener('change', async e => { await addPics([...e.target.files]); e.target.value = ''; });
 $('askText').addEventListener('paste', e => {
-  const files = [...(e.clipboardData?.files || [])].filter(f => f.type.startsWith('image/'));
+  const files = [...(e.clipboardData?.files || [])];
   if (files.length) { e.preventDefault(); addPics(files); }
 });
 $('askText').addEventListener('dragover', e => { if ([...e.dataTransfer.types].includes('Files')) { e.preventDefault(); $('askText').classList.add('drop'); } });
@@ -1452,6 +1552,9 @@ $('askText').addEventListener('drop', e => {
 $('askText').addEventListener('input', drawRoute);
 $('askProject').addEventListener('change', () => { projTouched = true; drawRoute(); });
 $('askTarget').addEventListener('change', drawRoute);
+$('askMore').addEventListener('click', () => { showRoute($('askRoute').hidden); if (!$('askRoute').hidden) $('askTarget').focus(); });
+$('askToggle').addEventListener('click', () => showAsk(!askOpen));
+showAsk(askOpen);
 $('nowAnswer').addEventListener('click', () => {
   const it = (data?.waiting || [])[nowIdx % Math.max(1, (data?.waiting || []).length)];
   if (it) { const q = (tx(it.ask) || tx(it.name)).slice(0, 60); setTarget('item:' + it.id, () => t('tAnswer') + q); }

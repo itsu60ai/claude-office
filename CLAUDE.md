@@ -22,6 +22,10 @@ When you need a decision from the user, add it to `tasks.json` in this folder (c
   - Before saving, read the card alone. If a friend could not tell what they are agreeing to, rewrite it.
 - `id`: 2-8 capital letters, a dash, a number. Never reuse one.
 - Text fields (`name`, `ask`, each `why` line, `pickWhy`, `next`) can be a plain string or `{"he": "...", "en": "..."}`. The page shows the one that matches its language. Write the user's language at least; add both if they switch between them.
+- Every thing the user has to do is one button. Instead of writing instructions ("open X, copy Y, paste in Z"), add `steps`: a list of up to 4 `{"do", "text", "label", "say"}`.
+  - `do: "send"` opens the card's chat (or a new chat when there is none, or with `"to": "new"`) with `say` ready. `do: "copy"` puts `say` on the clipboard. `do: "fill"` puts `say` in the Ask box.
+  - `text`: one short line on what the step does and how the user knows it worked. `label`: 2-4 words on the button.
+  - Nothing is sent by a step. The user still presses Send in the chat.
 - `quick: true` only for a real yes/no with no side effects you haven't described. Anything else: `quick: false` and a `next` line; the page sends the user to a chat for it.
 - Before writing: read the file, keep a copy, write the whole file back as valid JSON. Never remove other items.
 - Never put emails, phone numbers, passwords, keys or private names in this file.
