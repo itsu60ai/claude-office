@@ -1,52 +1,136 @@
-# The Office
+<div align="center">
+
+# 🏢 The Office
+
+**One page that shows all your Claude Code chats.**<br>
+Who's working, who got stuck, and what's waiting on you.
+
+[![Windows | Mac](https://img.shields.io/badge/Windows%20%7C%20Mac-5c4632?style=flat-square)](#install)
+[![Python 3.8+](https://img.shields.io/badge/Python-3.8%2B-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/downloads/)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-desktop-D97757?style=flat-square&logo=claude&logoColor=white)](https://claude.com/claude-code)
+[![Cost](https://img.shields.io/badge/cost-%240-2ea44f?style=flat-square)](#safe)
+[![Local only](https://img.shields.io/badge/runs%20on-127.0.0.1%20only-1D9E75?style=flat-square)](#safe)
+[![Stars](https://img.shields.io/github/stars/itsu60ai/claude-office?style=flat-square&color=f4b400)](https://github.com/itsu60ai/claude-office/stargazers)
 
 [עברית](README.md) · **English**
 
-Run a few Claude Code chats at once and they scatter. One is writing code, one is waiting for your OK, one finished an hour ago and nobody noticed. The Office is a single page that shows all of them together, and lets you ask for something without hunting for the right chat.
+[⚡ Setup](#install) · [✨ Features](#features) · [🔒 What it won't do](#safe) · [💬 Feedback](#feedback)
 
-### What you see
+<br>
 
-- **A desk for every chat.** Each chat that worked in the last 24 hours gets a desk with a small character. You see what it's doing right now (reading files, running a command, working in the browser), whether it finished and it's your turn, or whether it stopped midway, for example because it's waiting for your approval.
-- **Ask Claude.** Write what you need in plain words. The page suggests which project it belongs to, and you can change it. Click, and a Claude chat opens with your text already typed. You press Send. From there the office follows it: is it working, did it ask you something, what did it answer.
-- **Pictures.** Attach up to 4 images to a request (a screenshot, a sketch). They're saved in the office folder and Claude gets their path.
-- **Questions waiting for you.** When Claude needs a decision, it can leave it in `tasks.json` and it shows up as a card. A simple question takes one tap: Yes, No or Later. One that needs a conversation opens the chat.
-- **Ideas for the next version.** Missing something on the page? Write it down. Once you have a few, press Build and Claude builds a new version of the office on a separate copy. The page you're using doesn't change until you approve.
-- **Hebrew and English.** A switch in the corner. The page remembers your choice.
+<img src="assets/hero-en.png" width="100%" alt="The Office: desks for Claude chats, a question card and a request box">
 
-The page updates itself every 10 seconds. No need to refresh.
+</div>
 
-### What it doesn't do
+<br>
 
-- **It never sends anything for you.** Every request opens in a chat and you press Send. Without your click, nothing happens.
-- **It never leaves your computer.** The page runs only on your machine (127.0.0.1). No account, no outside server, no API key, no cost.
-- **It doesn't run AI in the background.** It only reads the files Claude already writes on your computer.
-- **It doesn't show private details.** Emails, phone numbers, passwords and keys never appear on the page, even if they came up in a chat. Names you choose to hide are replaced with an alias.
+> 💭 Running a few Claude chats at once? One is writing, one is waiting for your OK, one finished an hour ago and nobody noticed. The Office puts them all on one screen.
 
-### Setup, once
+<a id="features"></a>
 
-You need: the Claude desktop app with Claude Code, and Python 3.8 or newer ([download](https://www.python.org/downloads/)).
+## ✨ What's in it
 
-1. Download the folder (Code → Download ZIP on GitHub) and unzip it wherever you like.
-2. **Windows:** double-click `start.bat`.
-   **Mac:** right-click `start.command` → Open. The first time, macOS asks whether to open a file from an unknown developer. Choose Open.
-3. Your browser opens on the office. The black window that opened is what runs the page: keep it open, and close it when you want to stop.
+<table>
+<tr>
+<td width="50%" valign="top">
 
-The office already works at this point, with one general project.
+### 🪑 A desk for every chat
+<img src="assets/desks-en.png" alt="Desks">
 
-### Make it yours
+See at a glance what each chat is doing: 🟢 working, 🟠 stopped, 🔵 done and waiting for you.
 
-Open a new Claude Code chat in the office folder and paste:
+</td>
+<td width="50%" valign="top">
+
+### ✅ One-tap questions
+<img src="assets/question-en.png" alt="Question card">
+
+Claude needs a decision? It arrives as a card with Claude's pick. Yes, No, or Later.
+
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+
+### ✍️ Ask Claude
+<img src="assets/ask-en.png" alt="Request box">
+
+Write it in plain words. The page guesses the project and opens a chat with your text ready.
+
+</td>
+<td width="50%" valign="top">
+
+### 💡 Ideas for the next version
+<img src="assets/next-en.png" alt="Ideas for the next version">
+
+Missing something? Write it down. Press Build, and Claude builds a new version on a separate copy.
+
+</td>
+</tr>
+</table>
+
+<div align="center">
+
+📷 Up to 4 pictures per request &nbsp;·&nbsp; 📱 Works on your phone &nbsp;·&nbsp; 🌐 Hebrew and English &nbsp;·&nbsp; 🔄 Refreshes itself every 10 seconds
+
+</div>
+
+<a id="safe"></a>
+
+## 🔒 What it won't do
+
+| 🚫 Send for you | 🏠 Leave your computer | 💸 Cost money | 🙈 Show private details |
+|:---:|:---:|:---:|:---:|
+| Every request opens in a chat, and you press Send | Runs only on 127.0.0.1. No account, no outside server | No API key, no AI in the background. It only reads files | Emails, phone numbers and passwords never show on the page |
+
+<a id="install"></a>
+
+## ⚡ Setup in 3 steps
+
+> You need: the Claude desktop app with Claude Code, and [Python 3.8 or newer](https://www.python.org/downloads/).
+
+**1️⃣ Download.** At the top of this page: `Code` → `Download ZIP`, and unzip it wherever you like.
+
+**2️⃣ Start.** Windows: double-click `start.bat`. Mac: right-click `start.command` → Open.
+Your browser opens on the office. The black window is the engine, keep it open.
+
+**3️⃣ Set it up.** Open a Claude chat in the office folder and write:
 
 ```
-Set up my office. Read README.en.md and office.example.json in this folder and create office.json with my projects.
-Ask me what my projects are and which folder each one lives in, and suggest keywords for each one so the office guesses correctly where a request belongs.
-If there are names of people that shouldn't appear on the page, add them to privateNames.
+Set up my office using the README
 ```
 
-The page picks up the change on its own. No restart.
+Claude asks what your projects are and which folder each one lives in, and does the rest. The page picks up the change on its own.
+
+<a id="feedback"></a>
+
+## 💬 Feedback
+
+The office is new, and it gets better from what you tell us. After a few days of use, write to Claude in the office folder:
+
+```
+feedback
+```
+
+Claude asks 6 short questions, strips names and personal details, and gives you a ready message that starts with `#פידבק-משרד`. You copy it and send it to whoever shared the office with you. Claude never sends anything itself.
+
+[![Feedback form](https://img.shields.io/badge/Have%20GitHub%3F-Feedback%20form-238636?style=for-the-badge&logo=github)](https://github.com/itsu60ai/claude-office/issues/new?template=feedback.yml)
+
+## 📚 More details
 
 <details>
-<summary>What's in office.json, if you'd rather edit it yourself</summary>
+<summary><b>🙋 Let Claude leave you questions</b></summary>
+<br>
+
+`CLAUDE.md` in this folder tells Claude how to add a question to `tasks.json` and how to read your answer. To make every chat aware of it, ask Claude: "Add the section from the office's CLAUDE.md to my global instructions."
+
+There's a sample in `tasks.example.json`. A question can be written in Hebrew, English or both, and the page shows it in the language you picked. Without a `tasks.json`, the card simply doesn't show.
+
+</details>
+
+<details>
+<summary><b>⚙️ What's in office.json, if you'd rather edit it yourself</b></summary>
+<br>
 
 | Field | What it sets |
 |---|---|
@@ -57,33 +141,24 @@ The page picks up the change on its own. No restart.
 | `projects` | Your projects. Each has `id` (lowercase English), `name`, `nameEn`, `folder`, `color`, `keywords` |
 | `privateNames` | Names replaced with an alias, e.g. `{"Dana Cohen": "client"}` |
 
-`keywords` is a search pattern: words separated by `|`, e.g. `shop|products|checkout`. A chat belongs to a project by the folder it was opened in.
+`keywords` are words separated by `|`, e.g. `shop|products|checkout`. A chat belongs to a project by the folder it was opened in.
+
 </details>
 
-### Let Claude leave you questions
-
-`CLAUDE.md` in this folder tells Claude how to add a question to `tasks.json` and how to read your answer. To make every chat aware of it, ask Claude: "Add the section from the office's CLAUDE.md to my global instructions." There's a sample in `tasks.example.json`. A question can be written in Hebrew, English or both, and the page shows it in the language you picked. Without a `tasks.json`, the card simply doesn't show.
-
-### Feedback
-
-The office is new, and it gets better from what you tell us. After a few days of use, open a Claude chat in the office folder and write:
-
-```
-feedback
-```
-
-Claude asks six short questions, one at a time: what you tried, where you got stuck, what you used most, how much you'd miss it, what you'd change, and which computer you're on. It strips names and personal details and gives you a ready message that starts with `#פידבק-משרד`. You copy it and send it to whoever shared the office with you, in private or in the group. Claude never sends anything itself.
-
-Have a GitHub account? You can also [fill in the form here](https://github.com/itsu60ai/claude-office/issues/new?template=feedback.yml).
-
-### When something's off
+<details>
+<summary><b>🔧 When something's off</b></summary>
+<br>
 
 - **The page is empty, no desks.** The office shows chats from the last 24 hours. Open a Claude Code chat, write something, and wait a few seconds.
 - **"Python was not found".** Install Python from the link above. On Windows, tick "Add Python to PATH" during setup.
-- **The port is taken.** Run it on another port: `python server.py 8780`, then open `http://127.0.0.1:8780`.
-- **Mac.** We placed the Claude app's files on Mac where they usually live, but haven't tried it on a real Mac yet. If no desks show up, let us know.
+- **The port is taken.** Run `python server.py 8780`, then open `http://127.0.0.1:8780`.
+- **Mac.** Not tried on a real Mac yet. If no desks show up, let us know.
 
-### What's in the folder
+</details>
+
+<details>
+<summary><b>📁 What's in the folder</b></summary>
+<br>
 
 | File | What it is |
 |---|---|
@@ -92,7 +167,9 @@ Have a GitHub account? You can also [fill in the form here](https://github.com/i
 | `start.bat` / `start.command` | One-click start for Windows and Mac |
 | `office.example.json` | Sample settings. Yours live in `office.json` |
 | `tasks.example.json` | Sample questions waiting for you |
-| `README.md` | This guide in Hebrew |
-| `CLAUDE.md` | Instructions for Claude, including how to collect feedback |
+| `CLAUDE.md` | Instructions for Claude: setup, questions, feedback |
 | `VERSION` | The version number, added to every feedback message |
+| `assets/` | The pictures on this page, with made-up data |
 | `state/` | Created on its own: request history, pictures and backups. Never committed |
+
+</details>
