@@ -442,7 +442,7 @@ footer{max-width:1100px;margin:0 auto;padding:4px 16px 28px;font-size:0.8125rem;
 html[dir=rtl] [data-bidi], html[dir=rtl] [data-bidi-in]{text-align:right}
 html[dir=ltr] [data-bidi], html[dir=ltr] [data-bidi-in]{text-align:left}
 [dir=rtl] .stat small,[dir=rtl] .needs .kicker,[dir=rtl] #tourCard .step{letter-spacing:0}
-/* feedback: three questions, then WhatsApp opens with the message ready */
+/* feedback: three questions, then a GitHub issue opens with the message ready */
 #fbDlg{--fbfs:1.0625rem;font-size:var(--fbfs);border:0;border-radius:16px;padding:1.3em 1.3em 1.1em;width:min(32em,calc(100% - 32px));background:var(--panel);color:var(--ink);box-shadow:var(--shadow-modal);line-height:1.5}
 #fbDlg::backdrop{background:var(--backdrop)}
 #fbDlg .top{display:flex;flex-wrap:wrap;align-items:flex-start;gap:.5em .75em;margin:0 0 .2em}
@@ -663,7 +663,7 @@ const PASTE = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent |
 /* every word on the page, in both languages. One name per thing: chat, desk, request, idea, task list, the next version. */
 const STR = {
 he: {
-  brand:'המשרד', langBtn:'English', langAria:'החלפת השפה לאנגלית', tourBtn:'סיור של דקה ◀', fbBtn:'💬 פידבק', fbTitle:'מה דעתך על המשרד?', fbHint:'שלוש שאלות קצרות. אפשר לענות רק על חלק.', fbRate:'כמה הוא עוזר לך?', fbScale:'1 = בכלל לא, 5 = מאוד', fbGood:'מה עבד טוב?', fbBad:'מה תקע או חסר?', fbSend:'שליחה בוואטסאפ', fbCancel:'ביטול', fbNote:'וואטסאפ ייפתח עם ההודעה מוכנה. לוחצים שם "שלח".', fbMsgRate:'ציון', fbGoodEx:'למשל: ראיתי מהר מה מחכה לי', fbBadEx:'למשל: לא הבנתי מה הכפתור הירוק עושה', txtSize:'גודל הטקסט', txtA:'א', txtSmaller:'הקטנת הטקסט', txtBigger:'הגדלת הטקסט',
+  brand:'המשרד', langBtn:'English', langAria:'החלפת השפה לאנגלית', tourBtn:'סיור של דקה ◀', fbBtn:'💬 פידבק', fbTitle:'מה דעתך על המשרד?', fbHint:'שלוש שאלות קצרות. אפשר לענות רק על חלק.', fbRate:'כמה הוא עוזר לך?', fbScale:'1 = בכלל לא, 5 = מאוד', fbGood:'מה עבד טוב?', fbBad:'מה תקע או חסר?', fbSend:'שליחה ב-GitHub', fbCancel:'ביטול', fbNote:'נפתח עמוד GitHub עם ההודעה מוכנה. לוחצים שם Submit (צריך חשבון GitHub חינמי).', fbMsgRate:'ציון', fbGoodEx:'למשל: ראיתי מהר מה מחכה לי', fbBadEx:'למשל: לא הבנתי מה הכפתור הירוק עושה', txtSize:'גודל הטקסט', txtA:'א', txtSmaller:'הקטנת הטקסט', txtBigger:'הגדלת הטקסט',
   sWork:'שיחות בעבודה', sWait:'מחכים לך', sAge:'עודכן', agoS: s => `לפני ${s} שנ'`,
   pulseConnecting:'מתחבר...', pulseOk:'מעודכן. הדף מתרענן לבד כל 10 שניות.',
   pulsePrivacy:'<span class="err">התצוגה מושהית.</span> הופיע בנתונים מידע פרטי, אז לא מוצג כלום.',
@@ -745,7 +745,7 @@ he: {
   toggleFail:'לא הצלחתי לשנות. אפשר לנסות שוב.', cancelled:'בוטל. הדף החי לא השתנה.',
   cancelRunning:'היא נבנית ממש עכשיו. צריך לעצור אותה קודם בשיחה שלה.', cancelFail:'לא הצלחתי לבטל.',
 
-  footer:'הדף קורא את הקבצים במחשב שלך כל 10 שניות, בלי מודל ובלי מכסה. הכפתורים רק שומרים טקסט ופותחים שיחה בקלוד. שום דבר לא רץ עד שלוחצים שם שלח. מהדף הזה שום דבר לא נשלח, לא משולם ולא מתפרסם. רוצה לספר מה עבד ומה לא? לוחצים למעלה על "פידבק", עונים על שלוש שאלות, וההודעה נפתחת בוואטסאפ מוכנה לשליחה.',
+  footer:'הדף קורא את הקבצים במחשב שלך כל 10 שניות, בלי מודל ובלי מכסה. הכפתורים רק שומרים טקסט ופותחים שיחה בקלוד. שום דבר לא רץ עד שלוחצים שם שלח. מהדף הזה שום דבר לא נשלח, לא משולם ולא מתפרסם. רוצה לספר מה עבד ומה לא? לוחצים למעלה על "פידבק", עונים על שלוש שאלות, וההודעה נפתחת ב-GitHub מוכנה לשליחה.',
 
   tStep: (i, n) => `שלב ${i} מתוך ${n}`, whyHere:'למה זה כאן:', back:'הקודם', next:'הבא', gotIt:'הבנתי', skipTour:'לדלג על הסיור',
   't1.title':'המצב בשתי שניות',
@@ -789,7 +789,7 @@ he: {
   's.tasks':'רשימת המשימות', 's.updated': n => `עודכן: ${n}`,
 },
 en: {
-  brand:'The office', langBtn:'עברית', langAria:'Switch the page to Hebrew', tourBtn:'▶ 1-minute tour', fbBtn:'💬 Feedback', fbTitle:'What do you think of the office?', fbHint:'Three short questions. Answer only the ones you want.', fbRate:'How much does it help you?', fbScale:'1 = not at all, 5 = a lot', fbGood:'What worked well?', fbBad:'What got stuck or is missing?', fbSend:'Send on WhatsApp', fbCancel:'Cancel', fbNote:'WhatsApp opens with the message ready. Press Send there.', fbMsgRate:'Rating', fbGoodEx:'For example: I quickly saw what was waiting for me', fbBadEx:'For example: I did not get what the green button does', txtSize:'Text size', txtA:'A', txtSmaller:'Smaller text', txtBigger:'Bigger text',
+  brand:'The office', langBtn:'עברית', langAria:'Switch the page to Hebrew', tourBtn:'▶ 1-minute tour', fbBtn:'💬 Feedback', fbTitle:'What do you think of the office?', fbHint:'Three short questions. Answer only the ones you want.', fbRate:'How much does it help you?', fbScale:'1 = not at all, 5 = a lot', fbGood:'What worked well?', fbBad:'What got stuck or is missing?', fbSend:'Send on GitHub', fbCancel:'Cancel', fbNote:'A GitHub page opens with the message ready. Press Submit there (free GitHub account needed).', fbMsgRate:'Rating', fbGoodEx:'For example: I quickly saw what was waiting for me', fbBadEx:'For example: I did not get what the green button does', txtSize:'Text size', txtA:'A', txtSmaller:'Smaller text', txtBigger:'Bigger text',
   sWork:'Chats working', sWait:'Waiting on you', sAge:'Updated', agoS: s => `${s}s ago`,
   pulseConnecting:'Connecting...', pulseOk:'Up to date. Refreshes itself every 10 seconds.',
   pulsePrivacy:'<span class="err">View paused.</span> Something private showed up in the data, so nothing is shown.',
@@ -871,7 +871,7 @@ en: {
   toggleFail:'Couldn\'t change it. Try again.', cancelled:'Cancelled. The live page never changed.',
   cancelRunning:'It\'s building right now. Stop it in its own chat first.', cancelFail:'Couldn\'t cancel it.',
 
-  footer:'This page reads the files on your computer every 10 seconds, with no model and no quota. The buttons only save text and open a chat in Claude. Nothing runs until you press Send there. Nothing is sent, paid for or published from this page. Want to tell us what worked and what didn\'t? Press "Feedback" at the top, answer three questions, and the message opens in WhatsApp ready to send.',
+  footer:'This page reads the files on your computer every 10 seconds, with no model and no quota. The buttons only save text and open a chat in Claude. Nothing runs until you press Send there. Nothing is sent, paid for or published from this page. Want to tell us what worked and what didn\'t? Press "Feedback" at the top, answer three questions, and the message opens on GitHub ready to send.',
 
   tStep: (i, n) => `Step ${i} of ${n}`, whyHere:'Why it\'s here:', back:'Back', next:'Next', gotIt:'Got it', skipTour:'Skip the tour',
   't1.title':'Where things stand, in 2 seconds',
@@ -1254,8 +1254,8 @@ function applyLang(){
   drawPics();
   if (tIdx >= 0) tourShow(tIdx);
 }
-// feedback goes straight to the person who shared the office; WhatsApp opens with the text, the user presses Send there
-const FEEDBACK_WA = '972546969503';
+// feedback opens a public GitHub issue with the text ready; the user presses Submit there
+const FEEDBACK_URL = 'https://github.com/itsu60ai/claude-office/issues/new';
 function fbFill(){
   const r = document.querySelector('input[name=fbRate]:checked');
   $('fbSend').disabled = !r && !$('fbGood').value.trim() && !$('fbBad').value.trim();
@@ -1306,7 +1306,7 @@ $('fbForm').addEventListener('submit', e => {
   if (r) lines.push(t('fbMsgRate') + ': ' + r.value + '/5');
   if (good) lines.push(t('fbGood') + ' ' + good);
   if (bad) lines.push(t('fbBad') + ' ' + bad);
-  window.open('https://wa.me/' + FEEDBACK_WA + '?text=' + encodeURIComponent(lines.join('\n')), '_blank', 'noopener');
+  window.open(FEEDBACK_URL + '?labels=feedback&title=' + encodeURIComponent(lines[0]) + '&body=' + encodeURIComponent(lines.join('\n')), '_blank', 'noopener');
   $('fbDlg').close(); $('fbForm').reset();
 });
 $('langBtn').addEventListener('click', () => {

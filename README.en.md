@@ -114,7 +114,7 @@ The office is new, and it gets better from what you tell us. After a few days of
 
 **2️⃣ Answer three questions.** A rating from 1 to 5, what worked well, and what got stuck or is missing. Answer only the ones you want.
 
-**3️⃣ Press "Send on WhatsApp".** WhatsApp opens with the message ready. Press Send there.
+**3️⃣ Press "Send on GitHub".** A GitHub page opens with the message ready. Press Submit there (free GitHub account needed).
 
 The message goes straight to the person who built the office.
 
